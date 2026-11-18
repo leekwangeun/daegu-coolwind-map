@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>대구 밤의 찬바람길</title>
+  <title>대구 열대야 찬바람길</title>
   <meta name="description" content="맑은 여름밤 산에서 식은 공기가 하천과 골짜기를 따라 대구 도심으로 내려오는 길을 공공데이터로 그린 지도" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
@@ -297,6 +297,14 @@
       font-size: 14.5px; line-height: 1.65; color: var(--on-board-2);
       padding: 12px 14px; border-radius: 10px; background: var(--board-2); border: 1px solid var(--rule);
     }
+    details.fold { display: block; }
+    details.fold > summary { display: flex; gap: 10px; align-items: center; cursor: pointer; list-style: none; }
+    details.fold > summary::-webkit-details-marker { display: none; }
+    details.fold > summary::after { content: "열기"; margin-left: auto; font-size: 12.5px; opacity: .75; }
+    details.fold[open] > summary::after { content: "닫기"; }
+    details.note.fold > p { margin: 8px 0 0 28px; }
+    details.limits.fold > summary h3 { margin: 0; }
+    details.limits.fold > ol { margin-top: 10px; }
     .note svg { flex: none; width: 18px; height: 18px; margin-top: 3px; color: var(--route); }
     .maplinks { display: flex; flex-wrap: wrap; gap: 8px; }
     .maplink {
@@ -487,14 +495,14 @@
 <body>
 
   <header class="topbar">
-    <a class="brand" href="#map-stage" aria-label="대구 밤의 찬바람길, 지도로 이동">
+    <a class="brand" href="#map-stage" aria-label="대구 열대야 찬바람길, 지도로 이동">
       <svg class="brand-mark" viewBox="0 0 26 26" aria-hidden="true">
         <rect x="1" y="1" width="24" height="24" rx="6" fill="#1f6b4f" />
         <rect x="3" y="3" width="20" height="20" rx="4.5" fill="none" stroke="#fff" stroke-width="1.5" />
         <path d="M6.5 16.5c2.4-0.2 3.6-2.6 6.2-2.6s3.8 2.4 6.8 2.4" fill="none" stroke="#ffd400" stroke-width="2" stroke-linecap="round" />
         <path d="M7 11.5l3.2-3.6 2.6 2.4 2.4-2.2 3.8 3.4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" />
       </svg>
-      <span class="brand-name">대구 밤의 찬바람길</span>
+      <span class="brand-name">대구 열대야 찬바람길</span>
     </a>
     <nav class="trail" aria-label="페이지 길잡이">
       <ol>
@@ -513,9 +521,8 @@
     <!-- Stage: title, one sentence, map -->
     <section class="stage" id="map-stage" aria-label="찬바람길 지도">
       <div class="stage-copy">
-        <h1>대구 밤의 찬바람길</h1>
+        <h1>대구 열대야 찬바람길</h1>
         <p class="lede">대구의 밤 찬 공기 흐름 경로를 지형, 토지피복, 하천, 대구시 공원 자료로 30m 격자에서 계산하고 기상청 관측소 기온으로 검증한 지도입니다.</p>
-        <p class="reading-key"><span class="k-blue" aria-hidden="true"></span>짙은 파랑: C_flow(찬 공기 흐름 간이 지표, 지형, 토지피복, 하천, 공원으로 계산한 0~100 상대 점수)가 높은 골짜기와 수변. <span class="k-pin" aria-hidden="true">1</span>주황 번호: 도심 유입 길목.</p>
         <p class="contest">2026 대구광역시 기후, 환경, 탄소중립 공공데이터 AI 활용대회 부문 2 (공공데이터 분석, 시각화)</p>
       </div>
 
@@ -622,7 +629,7 @@
 
       <article class="beat" id="beat-2" aria-labelledby="b2-h">
         <div class="beat-text">
-          <h2 id="b2-h"><span class="plate" aria-hidden="true">2</span>하늘 상태별 밤 냉각 폭</h2>
+          <h2 id="b2-h"><span class="plate" aria-hidden="true">2</span>맑은 밤과 흐린 밤의 기온 하강 폭</h2>
           <p class="body">구름 없는 밤에는 숲으로 덮인 산비탈이 먼저 식고, 무거워진 찬 공기는 골짜기와 하천을 따라 낮은 시가지 쪽으로 흘러내리기 쉽습니다. 2026년 여름 관측소 7곳에서도 맑은 밤에 기온이 두 배 넘게 떨어졌고, C_flow가 높은 하빈 관측소(달성군)와 도심의 신암 관측소(동구) 사이 밤 기온 차도 맑은 밤에 더 벌어졌습니다.</p>
           <div class="keynum">
             <span class="v">9.41<small>℃</small></span>
@@ -636,19 +643,19 @@
           </div>
         </div>
         <figure class="panel">
-          <h3>하늘 상태별 밤 기온 하강 폭</h3>
+          <h3>맑은 밤과 흐린 밤의 기온 하강 폭</h3>
           <p class="sub">관측소 7곳 평균, 2026년 6~9월 120밤</p>
           <div class="chart" id="chart-sky"></div>
           <figcaption>
             <span>하늘 상태는 하루 평균 구름양과 강수로 나눴습니다. 출처: 기상청 시간별 기온, 일별 기상</span>
-            <button type="button" class="textlink" onclick="openLightbox('assets/exp_e2_sky_cooling.png', '하늘 상태별 밤 기온 하강 폭과 하빈 관측소(달성군), 신암 관측소(동구)의 밤 최저기온 차')">원본 그래프</button>
+            <button type="button" class="textlink" onclick="openLightbox('assets/exp_e2_sky_cooling.png', '맑은 밤과 흐린 밤의 기온 하강 폭과 하빈 관측소(달성군), 신암 관측소(동구)의 밤 최저기온 차')">원본 그래프</button>
           </figcaption>
         </figure>
       </article>
 
       <article class="beat" id="beat-3" aria-labelledby="b3-h">
         <div class="beat-text">
-          <h2 id="b3-h"><span class="plate" aria-hidden="true">3</span>찬 공기 흐름 간이 지표(C_flow)와 도심 유입 길목 15곳</h2>
+          <h2 id="b3-h"><span class="plate" aria-hidden="true">3</span>찬 공기 흐름 간이 지표(C_flow) &amp; 도심 유입 길목 15곳</h2>
           <p class="body">지형과 토지피복으로 찬 공기 생성 간이 지표(C_gen)를 계산하고, DEM 위 MFD 흐름 누적에 하천과 대구시 도시공원을 흐름이 잘 이어지는 곳으로 넣어 30m 격자마다 찬 공기 흐름 간이 지표(C_flow, 0~100)를 매겼습니다. 시가지와 맞닿은 상위 10% 구간 47개 가운데 평균 C_flow가 높은 15곳을 도심 유입 길목으로 골랐습니다.</p>
           <div class="keynum">
             <span class="v">15<small>곳</small></span>
@@ -678,10 +685,7 @@
             <span class="v">0.997℃ → 0.850℃</span>
             <span class="l">랜덤포레스트 LOSO RMSE, C_flow 추가 전과 후 (예측 대상: 그 밤 관측소 평균 대비 최저기온 차)</span>
           </div>
-          <div class="note">
-            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 1.8l7.4 13.4H1.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /><path d="M9 7v3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /><circle cx="9" cy="13" r="1" fill="currentColor" /></svg>
-            <span>한계: 밤 기온 자료가 있는 관측소는 7곳이고, C_flow가 높은 곳은 시가지 비율도 낮습니다. RMSE 개선은 7곳 중 4곳이며 서구 관측소와 옥포 관측소(달성군)에 몰렸습니다. 바람 정렬은 달성, 옥포 관측소에서만 뚜렷했습니다.</span>
-          </div>
+          <details class="note fold"><summary><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 1.8l7.4 13.4H1.6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" /><path d="M9 7v3.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /><circle cx="9" cy="13" r="1" fill="currentColor" /></svg><span>검증 한계</span></summary><p>밤 기온 자료가 있는 관측소는 7곳이고, C_flow가 높은 곳은 시가지 비율도 낮습니다. RMSE 개선은 7곳 중 4곳이며 서구 관측소와 옥포 관측소(달성군)에 몰렸습니다. 바람 정렬은 달성, 옥포 관측소에서만 뚜렷했습니다.</p></details>
           <div class="maplinks">
             <button type="button" class="maplink" onclick="goMap('station')">
               <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -711,10 +715,7 @@
             <span class="v">15곳</span>
             <span class="l">행정 검토 지점 (건물 높이 반영안과 겹친 곳 7곳)</span>
           </div>
-          <div class="note">
-            <svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="M9 8v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /><circle cx="9" cy="5.4" r="1.1" fill="currentColor" /></svg>
-            <span>보행로 연결, 횡단, 밤 조명과 안전은 현장 확인 전입니다.</span>
-          </div>
+          <details class="note fold"><summary><svg viewBox="0 0 18 18" aria-hidden="true"><circle cx="9" cy="9" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="M9 8v4.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /><circle cx="9" cy="5.4" r="1.1" fill="currentColor" /></svg><span>현장 확인 사항</span></summary><p>보행로 연결, 횡단, 밤 조명과 안전은 현장 확인 전입니다.</p></details>
           <div class="maplinks">
             <button type="button" class="maplink" onclick="goMap('citizen')">
               <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -743,8 +744,7 @@
       <h2 id="more-h">자세히 보기</h2>
       <p class="more-intro">계산 방법, 검증과 민감도 결과, 한계, 데이터 출처와 AI 활용 내역입니다. 모든 수치와 계산 과정은 함께 제출한 분석 보고서(PDF)에 정리했습니다.</p>
 
-      <div class="limits">
-        <h3>주요 한계 5가지</h3>
+      <details class="limits fold"><summary><h3>주요 한계 5가지</h3></summary>
         <ol>
           <li><span><strong>관측소가 7곳뿐입니다.</strong> 밤 기온 자료가 있는 기상청 관측소가 7곳이라, 관측소-밤 832개 패널이어도 독립 공간 표본은 7개입니다.</span></li>
           <li><span><strong>시가지 효과와 섞여 있습니다.</strong> C_flow와 시가지 비율의 Spearman 순위상관이 -0.75입니다. 시가지 비율을 통제한 편상관은 밤 최저기온에서 -0.828(p=0.042)로 남았지만, 맑은 밤과 흐린 밤의 냉각 폭 차이에서는 +0.639(p=0.1719)로 유의하지 않았습니다.</span></li>
@@ -752,7 +752,7 @@
           <li><span><strong>건물 높이 비교는 후보 조건이 다릅니다.</strong> 건물 높이를 넣은 검토 지점 15곳은 기본안과 500m 안에서 7곳(46.7%)만 겹쳤고, 두 안의 후보 선정 조건이 달라 건물 높이 효과만 따로 볼 수 없습니다.</span></li>
           <li><span><strong>바람 관측 근거는 약합니다.</strong> 지형이 가리키는 상류 방향에서 바람이 분 비율이 흐린 밤보다 맑은 밤에 높았던 곳은 달성 관측소(달성군)와 옥포 관측소(달성군)뿐이었고, 절반을 넘은 곳은 달성 관측소 한 곳(56.84%)이었습니다.</span></li>
         </ol>
-      </div>
+      </details>
 
       <div class="acc">
         <details class="sec" id="sec-method">
@@ -779,7 +779,7 @@
         <details class="sec" id="sec-verify">
           <summary>
             <span class="st">관측소 검증과 머신러닝 결과</span>
-            <span class="sd">관측소 7곳 실측 비교, 하늘 상태별 냉각, 날짜 고정효과 회귀, LOSO 머신러닝, SHAP</span>
+            <span class="sd">관측소 7곳 실측 비교, 맑은 밤과 흐린 밤 냉각 비교, 날짜 고정효과 회귀, LOSO 머신러닝, SHAP</span>
             <svg viewBox="0 0 22 22" aria-hidden="true"><path d="M6 9l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
           </summary>
           <div class="sec-body">
@@ -833,8 +833,8 @@
             <div class="figs">
               <button type="button" class="fig-btn" onclick="openLightbox('assets/chart_03_station_validation_scatter.png', '관측소 7곳 C_flow와 열대야 밤 기온 산점도')"><img src="assets/chart_03_station_validation_scatter.png" alt="" loading="lazy" /><span>관측소 7곳 산점도 원본</span></button>
               <button type="button" class="fig-btn" onclick="openLightbox('assets/exp_e1_loso.png', 'LOSO 검증의 C_flow 추가 전후 RMSE')"><img src="assets/exp_e1_loso.png" alt="" loading="lazy" /><span>C_flow 추가 전후 LOSO RMSE</span></button>
-              <button type="button" class="fig-btn" onclick="openLightbox('assets/exp_e1_shap.png', 'TreeSHAP 변수 기여도와 하늘 상태별 C_flow 기여 분포')"><img src="assets/exp_e1_shap.png" alt="" loading="lazy" /><span>TreeSHAP 변수 기여도</span></button>
-              <button type="button" class="fig-btn" onclick="openLightbox('assets/exp_e2_sky_cooling.png', '하늘 상태별 밤 기온 하강 폭과 하빈 관측소(달성군), 신암 관측소(동구)의 밤 최저기온 차')"><img src="assets/exp_e2_sky_cooling.png" alt="" loading="lazy" /><span>하늘 상태별 냉각 비교</span></button>
+              <button type="button" class="fig-btn" onclick="openLightbox('assets/exp_e1_shap.png', 'TreeSHAP 변수 기여도와 맑은 밤과 흐린 밤의 C_flow 기여 분포')"><img src="assets/exp_e1_shap.png" alt="" loading="lazy" /><span>TreeSHAP 변수 기여도</span></button>
+              <button type="button" class="fig-btn" onclick="openLightbox('assets/exp_e2_sky_cooling.png', '맑은 밤과 흐린 밤의 기온 하강 폭과 하빈 관측소(달성군), 신암 관측소(동구)의 밤 최저기온 차')"><img src="assets/exp_e2_sky_cooling.png" alt="" loading="lazy" /><span>맑은 밤과 흐린 밤 냉각 비교 비교</span></button>
             </div>
           </div>
         </details>
@@ -986,11 +986,11 @@
         <details class="sec" id="sec-ai">
           <summary>
             <span class="st">AI 활용 내역</span>
-            <span class="sd">사용 기간 2026-11-17 ~ 2026-11-18, 역할별 모델과 사람이 맡은 일</span>
+            <span class="sd">사용 기간 2026-11-18 (본 출품작 기준), 역할별 모델과 사람이 맡은 일</span>
             <svg viewBox="0 0 22 22" aria-hidden="true"><path d="M6 9l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
           </summary>
           <div class="sec-body">
-            <p>사용 기간: 2026-11-17 ~ 2026-11-18. 분석은 Python 3.11 환경에서 scikit-learn, shap, statsmodels, rasterio와 난수 시드 42로 수행했습니다. 모든 숫자는 코드 실행 결과 파일과 자동 대조했고, 다른 회사 모델의 독립 재현으로 핵심 수치와 방향을 교차 확인했습니다. 주제 결정, 데이터 직접 수집, 수치 대조, 리뷰 반영 여부 판단은 연구자가 직접 했습니다.</p>
+            <p>사용 기간: 2026-11-18 (본 출품작 기준). 분석은 Python 3.11 환경에서 scikit-learn, shap, statsmodels, rasterio와 난수 시드 42로 수행했습니다. 모든 숫자는 코드 실행 결과 파일과 자동 대조했고, 다른 회사 모델의 독립 재현으로 핵심 수치와 방향을 교차 확인했습니다. 주제 결정, 데이터 직접 수집, 수치 대조, 리뷰 반영 여부 판단은 연구자가 직접 했습니다.</p>
             <div class="panel">
               <div class="tbl-wrap">
                 <table class="tbl" style="min-width:560px">
@@ -1032,7 +1032,7 @@
   </main>
 
   <footer class="site-footer">
-    대구 밤의 찬바람길 | 2026 대구광역시 기후, 환경, 탄소중립 공공데이터 AI 활용대회 부문 2<br />
+    대구 열대야 찬바람길 | 2026 대구광역시 기후, 환경, 탄소중립 공공데이터 AI 활용대회 부문 2<br />
     <span class="basemap-credit">배경 지형: Copernicus DEM GLO-30 음영. 하천과 구군 경계: OpenStreetMap contributors (ODbL)</span>
   </footer>
 
@@ -1124,7 +1124,7 @@
 
     const PRESET_DESC = {
       citizen: "찬바람길 탐색 등급(C_flow와 수변, 공원 접근성 결합, 1~5등급)과 현장 확인 후보 구간 8곳(노란 선)",
-      flow: "찬 공기 흐름 간이 지표(C_flow, 0~100)와 도심 유입 길목 15곳",
+      flow: "찬 공기 흐름 간이 지표(C_flow, 0~100) & 도심 유입 길목 15곳",
       admin: "행정 검토 지점: R_block 기본안 15곳(흰 원)과 건물 높이 반영안 15곳(주황 원)",
       station: "기상청 관측소 14곳과 2026년 열대야 31일 밤 최저기온 평균(자료가 있는 곳은 대구 안 7곳)"
     };
