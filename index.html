@@ -886,7 +886,7 @@
         대구시 공공데이터 5종과 기상청 자료 5종(야간 바람 포함)을 지형, 토지피복, 건물 공간정보와 결합해 밤에 산 사면에서 시가지로 내려오는 찬 공기 흐름을 상대 점수로 계산하고, 기상청 실측 기온 및 바람, 패널 회귀와 머신러닝, 의사 지형 및 건물 높이 민감도로 검증했습니다.
       </p>
       <div class="notice-bar">
-        <strong>해석 안내:</strong> 이 페이지의 모든 지표(생성 간이 지표 C_gen, 흐름 간이 지표 C_flow, 시민 체감 등급 1~5등급, 길목 막힘 위험 지수 R_block)는 지형과 토지피복으로 계산한 무차원 상대 점수 또는 백분위 등급이며, 실제 풍속, 풍량, 기온 저감량을 뜻하지 않습니다. "몇 도 더 시원하다"는 표현은 기상청 관측소 실측 밤 기온을 직접 비교할 때만 사용합니다.
+        <strong>해석 안내:</strong> 이 페이지의 모든 지표(생성 간이 지표 C_gen, 흐름 간이 지표 C_flow, 찬바람길 탐색 등급 1~5등급(흐름 잠재력과 수변/공원 접근성 결합), 길목 막힘 위험 지수 R_block)는 지형과 토지피복으로 계산한 무차원 상대 점수 또는 백분위 등급이며, 실제 풍속, 풍량, 기온 저감량을 뜻하지 않습니다. "몇 도 더 시원하다"는 표현은 기상청 관측소 실측 밤 기온을 직접 비교할 때만 사용합니다.
       </div>
     </div>
   </header>
@@ -909,14 +909,14 @@
       <div class="kpi-sub">대구 8개 구군 중 C_gen 0.6 이상 비율 (평균 0.4827)</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">도심 유입 길목과 추천 코스</div>
-      <div class="kpi-value">길목 15곳 / 코스 8개</div>
-      <div class="kpi-sub">유입 구간 47개 중 상위 15곳, 보행 코스 후보 41곳 중 8개</div>
+      <div class="kpi-label">도심 유입 길목과 후보 구간</div>
+      <div class="kpi-value">길목 15곳 / 후보 8개</div>
+      <div class="kpi-sub">유입 구간 47개 중 상위 15곳, 현장 확인이 필요한 후보 구간 41곳 중 8개</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">실측 7곳 및 LOSO AI 검증</div>
       <div class="kpi-value">RMSE 0.997 → 0.850℃</div>
-      <div class="kpi-sub">단순 상관 -0.929(편상관 p=0.1719 비유의), 패널 AI C_flow 추가 개선</div>
+      <div class="kpi-sub">밤 최저기온 순위상관 -0.929(시가지 통제 -0.828, p 약 0.042, n=7), 냉각 폭 차이 편상관 +0.639(p=0.1719)</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">행정 검토 막힘 위험 지점</div>
@@ -933,9 +933,9 @@
       <div class="map-panel">
         <div class="map-toolbar">
           <div class="toolbar-title-row">
-            <h2 class="toolbar-title">인터랙티브 찬바람길 지도 (클릭하여 상세 수치 확인)</h2>
+            <h2 class="toolbar-title">인터랙티브 찬바람길 탐색 지도 (클릭하여 상세 수치 확인)</h2>
             <div class="preset-btns">
-              <button type="button" class="btn-preset active" id="preset-citizen" onclick="applyPreset('citizen')">시민 산책 코스 보기</button>
+              <button type="button" class="btn-preset active" id="preset-citizen" onclick="applyPreset('citizen')">현장 확인 후보 구간 보기</button>
               <button type="button" class="btn-preset" id="preset-flow" onclick="applyPreset('flow')">찬 공기 흐름과 길목 보기</button>
               <button type="button" class="btn-preset" id="preset-admin" onclick="applyPreset('admin')">행정 막힘 위험 지점 보기</button>
               <button type="button" class="btn-preset" id="preset-station" onclick="applyPreset('station')">기상청 관측소 비교</button>
@@ -946,7 +946,7 @@
             <label class="layer-toggle">
               <input type="checkbox" id="chk-grade" checked onchange="toggleLayer('grade', this.checked)" />
               <span class="swatch" style="background: #08519c;"></span>
-              <span>찬바람길 등급(1~5)</span>
+              <span>찬바람길 탐색 등급(1~5)</span>
             </label>
             <label class="layer-toggle">
               <input type="checkbox" id="chk-cflow" onchange="toggleLayer('cflow', this.checked)" />
@@ -956,7 +956,7 @@
             <label class="layer-toggle">
               <input type="checkbox" id="chk-courses" checked onchange="toggleLayer('courses', this.checked)" />
               <span class="swatch" style="background: #ffd400; border-color: #111;"></span>
-              <span>추천 코스(8개)</span>
+              <span>현장 확인 후보 구간(8개)</span>
             </label>
             <label class="layer-toggle">
               <input type="checkbox" id="chk-corridors" checked onchange="toggleLayer('corridors', this.checked)" />
@@ -1004,13 +1004,13 @@
         <div class="map-legend-bar">
           <div class="legend-grid">
             <div>
-              <div class="legend-group-title">시민 체감 찬바람길 등급 (보행 영역 백분위, 실측 기온 차이 아님)</div>
+              <div class="legend-group-title">찬바람길 탐색 등급(흐름 잠재력과 수변/공원 접근성 결합, 실측 기온 차이 아님)</div>
               <div class="grade-pills">
                 <span class="grade-pill"><span class="swatch" style="background:#08519c;"></span>1등급 (상위 10%)</span>
                 <span class="grade-pill"><span class="swatch" style="background:#4292c6;"></span>2등급 (10~25%)</span>
                 <span class="grade-pill"><span class="swatch" style="background:#c6dbef;"></span>3등급 (25~50%)</span>
                 <span class="grade-pill"><span class="swatch" style="background:#fdd0a2;"></span>4등급 (50~75%)</span>
-                <span class="grade-pill"><span class="swatch" style="background:#e6550d;"></span>5등급 열기 정체 주의 (하위 25%)</span>
+                <span class="grade-pill"><span class="swatch" style="background:#e6550d;"></span>5등급 하위 구간 (하위 25%)</span>
               </div>
             </div>
             <div>
@@ -1027,7 +1027,7 @@
 
         <!-- Quick Feature Selector List -->
         <div class="explorer-tabs" role="tablist">
-          <button type="button" class="explorer-tab active" id="tab-courses" onclick="switchExplorerTab('courses')">추천 코스 (8개)</button>
+          <button type="button" class="explorer-tab active" id="tab-courses" onclick="switchExplorerTab('courses')">후보 구간 (8개)</button>
           <button type="button" class="explorer-tab" id="tab-corridors" onclick="switchExplorerTab('corridors')">유입 길목 (15곳)</button>
           <button type="button" class="explorer-tab" id="tab-hotspots" onclick="switchExplorerTab('hotspots')">막힘 기존안 (15곳)</button>
           <button type="button" class="explorer-tab" id="tab-bhotspots" onclick="switchExplorerTab('bhotspots')">건물 높이 막힘 (15곳)</button>
@@ -1056,7 +1056,7 @@
               2026년 여름 열대야는 총 <strong>31일</strong>이었습니다. 기상청 열대야 목록 기준 밤 최저기온 평균은 <strong>26.35℃</strong>(최고 <strong>28.8℃</strong>)이고, 21시~다음 날 06시 정시 자료 기준 평균은 <strong>26.45℃</strong>, 일별 달력일(00~24시) 최저 평균은 <strong>26.00℃</strong>(목록과 3일만 일치)이므로 목적에 따라 시간 기준을 구분해 사용합니다.
             </p>
             <div class="story-highlight">
-              <strong>일교차 대신 실제 야간 냉각 폭(18시~밤 최저)으로 검증:</strong> 1차 분석에서 참고한 일교차(맑은 날 11.57℃ 대 흐리거나 비 온 날 7.39℃)에는 낮 동안 햇볕으로 최고기온이 오르는 영향이 크게 섞입니다. 06 보강 실험에서 주간 가열을 제외한 야간 냉각 폭으로 2026년 6~9월 완결 <strong>120밤</strong>(관측소 7곳 평균)을 다시 집계한 결과, <strong>맑은 밤(25밤) 평균 9.41℃</strong>(중앙값 9.36℃), 중간 밤(43밤) <strong>7.74℃</strong>, <strong>흐리거나 비 온 밤(52밤) 4.63℃</strong>(중앙값 4.46℃)로 맑은 밤의 냉각 폭이 두 배를 넘었습니다. 같은 기간 C_flow 최상위 하빈과 최하위 신암의 밤 최저기온 차이도 맑은 밤 평균 <strong>-3.44℃</strong>에서 흐리거나 비 온 밤 <strong>-1.38℃</strong>로 절반 이하로 줄었습니다.
+              <strong>일교차 대신 저녁 18시부터 밤 최저까지의 하강 폭으로 검증:</strong> 1차 분석에서 참고한 일교차(맑은 날 11.57℃ 대 흐리거나 비 온 날 7.39℃)에는 낮 동안 햇볕으로 최고기온이 오르는 영향이 크게 섞입니다. 06 보강 실험에서 일교차 대신 저녁 18시부터 밤 최저까지의 하강 폭으로 2026년 6~9월 완결 <strong>120밤</strong>(관측소 7곳 평균, 강수 빈칸 또는 0이고 일평균 운량 3 이하를 맑음으로 분류)을 다시 집계한 결과, <strong>맑은 밤(25밤) 평균 9.41℃</strong>(중앙값 9.36℃), 중간 밤(43밤) <strong>7.74℃</strong>, <strong>흐리거나 비 온 밤(52밤) 4.63℃</strong>(중앙값 4.46℃)로 맑은 밤의 하강 폭이 두 배를 넘었습니다. 같은 기간 C_flow 최상위 하빈과 최하위 신암의 밤 최저기온 차이도 맑은 밤 평균 <strong>-3.44℃</strong>에서 흐리거나 비 온 밤 <strong>-1.38℃</strong>로 절반 이하로 줄었습니다.
             </div>
             <figure class="story-figure">
               <img src="assets/exp_e2_sky_cooling.png" alt="하늘 상태별 7개 관측소 평균 야간 냉각 폭 및 하빈 대 신암 밤 최저기온 차이" onclick="openLightbox(this.src, this.alt)" />
@@ -1140,15 +1140,15 @@
           </div>
           <div class="story-body">
             <p>
-              대구 주변 기상청 관측소 <strong>14곳</strong>(격자 안 <strong>12곳</strong>) 가운데 2026년 여름 시간별 기온 자료가 확보된 <strong>7곳</strong>(하빈, 달성, 대구북구, 옥포, 대구, 대구서구, 신암)에서 열대야 <strong>31일</strong>의 야간(21시~다음 날 06시) 실측 기온과 반경 500m 평균 지표를 비교했습니다.
+              대구 주변 기상청 관측소 <strong>14곳</strong>(격자 안 <strong>12곳</strong>) 가운데 2026년 여름 시간별 기온 자료가 확보된 <strong>7곳</strong>(하빈, 달성, 대구북구, 옥포, 대구, 대구서구, 신암)에서 열대야 <strong>31일</strong>의 야간(21시~다음 날 06시, <strong>02 관측소 비교 기준: 밤 6시간 이상 관측된 밤</strong>) 실측 기온과 반경 500m 평균 지표를 비교했습니다.
             </p>
             <p>
-              관측소 실측 비교에서 흐름 지표가 가장 높은 <strong>하빈(C_flow 19.746)</strong>의 열대야 밤 최저기온 평균은 <strong>24.60℃</strong>로 대구(ASOS 143, C_flow 10.924, 밤 최저 <strong>26.45℃</strong>)보다 실측 기준 <strong>1.85℃</strong> 낮았고, 옥포(25.57℃)는 <strong>0.88℃</strong>, 달성(25.53℃)은 <strong>0.92℃</strong>, 대구북구(25.97℃)는 <strong>0.48℃</strong> 더 낮았습니다. 반대로 도심 한가운데에 있어 흐름 지표가 가장 낮은 <strong>신암(C_flow 1.470)</strong>은 <strong>27.22℃</strong>로 대구 관측소보다 <strong>0.76℃</strong> 더 높았습니다. 7곳에서 500m 버퍼 C_flow와 열대야 밤 최저기온의 순위 상관은 <strong>Spearman ρ = -0.929</strong>(p=0.0025), 야간 냉각 폭과는 <strong>+0.893</strong>이었습니다.
+              관측소 실측 비교에서 흐름 지표가 가장 높은 <strong>하빈(C_flow 19.746)</strong>의 열대야 밤 최저기온 평균은 <strong>24.60℃</strong>로 대구(ASOS 143, C_flow 10.924, 밤 최저 <strong>26.45℃</strong>)보다 실측 기준 <strong>1.85℃</strong> 낮았고, 옥포(25.57℃)는 <strong>0.88℃</strong>, 달성(25.53℃)은 <strong>0.92℃</strong>, 대구북구(25.97℃)는 <strong>0.48℃</strong> 더 낮았습니다. 반대로 도심 한가운데에 있어 흐름 지표가 가장 낮은 <strong>신암(C_flow 1.470)</strong>은 <strong>27.22℃</strong>로 대구 관측소보다 <strong>0.76℃</strong> 더 높았습니다. 7곳에서 500m 버퍼 C_flow와 열대야 밤 최저기온의 단순 순위상관은 <strong>Spearman ρ = -0.929</strong>(p=0.0025), 시가지 비율을 통제한 편순위상관은 <strong>-0.828</strong>(근사 p 약 0.042, n=7, <code>07d_extra.json</code> 기준)이며, 열대야 야간 냉각 폭과의 단순 순위상관은 <strong>+0.893</strong>이었습니다.
             </p>
             <div class="story-caution">
-              <strong>검증의 핵심 한계 (표본 수 n=7 및 시가지 편상관 비유의):</strong>
-              1) 시간별 기온이 있는 관측소가 <strong>7곳</strong>뿐이라 방향성 확인 수준입니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳은 시간자료 없음).<br />
-              2) 7곳에서 500m C_flow와 시가지 비율의 순위 상관이 <strong>-0.75</strong>이고, 06 보강 실험에서 관측소별 [맑은 밤 냉각 폭 - 흐린 밤 냉각 폭] 차이(하빈 6.30℃ 대 신암 3.60℃)와 C_flow의 단순 순위 상관은 <strong>0.857</strong>(p=0.0137)이었으나, <strong>시가지 비율을 통제한 편순위상관은 0.639(근사 p=0.1719)로 통계적으로 유의하지 않았습니다.</strong> 따라서 7곳 요약만으로는 C_flow와 시가지 비율 효과를 분리할 수 없습니다.
+              <strong>검증의 핵심 한계 (표본 수 n=7 및 분석 대상별 편상관 구분):</strong>
+              1) 시간별 기온이 있는 관측소가 <strong>7곳</strong>뿐이라 검정력이 매우 낮습니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳은 시간자료 없음).<br />
+              2) 열대야 밤 최저기온과 C_flow의 시가지 통제 편순위상관(<strong>-0.828</strong>, p 약 0.042, n=7)과 별개로, 06 보강 실험에서 관측소별 [맑은 밤 냉각 폭 - 흐린 밤 냉각 폭] 차이(하빈 6.30℃ 대 신암 3.60℃)를 대상으로 보면 단순 순위상관은 <strong>+0.857</strong>(p=0.0137)이나 시가지 비율 통제 편순위상관은 <strong>+0.639</strong>(근사 p=0.1719)로 통계적으로 유의하지 않았습니다. 두 수치는 분석 대상이 서로 다른 결과이며, n=7 요약만으로는 공간 교란 요인을 완전히 분리할 수 없습니다.
             </div>
             <figure class="story-figure">
               <img src="assets/chart_03_station_validation_scatter.png" alt="기상청 관측소 7곳 C_flow 대 열대야 야간 최저기온, 고도보정 기온, 야간 냉각 폭 산점도" onclick="openLightbox(this.src, this.alt)" />
@@ -1170,13 +1170,13 @@
           </div>
           <div class="story-body">
             <p>
-              7개 관측소의 2026년 6~9월 완결 120밤을 합친 <strong>832개 관측소-밤 패널</strong>(21~06시 10개 정시 모두 충족)에서 시가지 비율과 다른 공간, 기상 변수를 통제한 뒤에도 C_flow가 추가 설명력을 갖는지 검증했습니다. 날짜 고정효과 회귀(조건수 27.28)에서 C_flow 10점당 밤 최저기온 계수는 <strong>-1.20℃</strong>(군집 와일드 95% 신뢰구간 -1.89~-0.50℃), 맑은 밤 교차항은 <strong>-0.45℃</strong>(맑은 밤 기울기 -1.65℃)였습니다.
+              7개 관측소의 2026년 6~9월 완결 120밤을 합친 <strong>832개 관측소-밤 패널</strong>(<strong>06 패널 기준: 21~06시 10정시 완비 밤만 포함</strong>, 02 관측소 비교의 밤 6시간 이상 기준과 구분)에서 시가지 비율과 다른 공간, 기상 변수를 통제한 뒤에도 C_flow가 추가 설명력을 갖는지 검증했습니다. 날짜 고정효과 회귀(조건수 27.28)에서 C_flow 10점당 밤 최저기온 계수는 <strong>-1.20℃</strong>(군집 와일드 95% 신뢰구간 -1.89~-0.50℃), 맑은 밤 교차항은 <strong>-0.45℃</strong>(맑은 밤 기울기 -1.65℃)였습니다.
             </p>
             <p>
-              이어서 시험 관측소의 기온 정보를 완전히 빼고 학습 관측소 6곳 평균으로만 중심화하는 <strong>관측소 하나 빼기(LOSO) 교차검증</strong>을 수행했습니다. 보수적으로 과적합을 제한한 트리 모형(공간변수 C_gen, 시가지 비율, 녹지 비율, 해발고도, 하천거리 + 날씨변수 운량, 강수, 낮 최고기온 포함)에 C_flow를 추가하자 두 모형 모두 새 관측소 예측 오차가 줄었습니다.
+              이어서 시험 관측소의 기온 정보를 완전히 빼고 학습 관측소 6곳 평균으로만 중심화해 <strong>그 밤 관측소 평균 대비 최저기온 차</strong>를 예측하는 <strong>관측소 하나 빼기(LOSO) 교차검증</strong>을 수행했습니다. 보수적으로 과적합을 제한한 트리 모형(공간변수 C_gen, 시가지 비율, 녹지 비율, 해발고도, 하천거리 + 날씨변수 운량, 강수, 낮 최고기온 포함)에 C_flow를 추가하자 두 모형 모두 새 관측소 예측 오차가 줄었습니다.
             </p>
             <div class="story-highlight">
-              <strong>LOSO 검증 오차 감소 및 독립 재현 결과:</strong><br />
+              <strong>LOSO 검증 오차 감소 및 독립 재현 결과 (예측 목표: 그 밤 관측소 평균 대비 최저기온 차):</strong><br />
               1) <strong>랜덤포레스트</strong>(max_depth=5, min_samples_leaf=15, n_estimators=300): RMSE <strong>0.997℃ → 0.850℃</strong> (<strong>0.147℃</strong> 감소, 관측소 재표집 95% 구간 0.019~0.305℃), MAE <strong>0.773℃ → 0.645℃</strong> (0.128℃ 감소).<br />
               2) <strong>그래디언트부스팅</strong>(max_depth=2, min_samples_leaf=15, n_estimators=150): RMSE <strong>0.918℃ → 0.825℃</strong> (<strong>0.094℃</strong> 감소, 95% 구간 0.006~0.220℃), MAE <strong>0.709℃ → 0.616℃</strong> (0.093℃ 감소).<br />
               3) <strong>다른 AI 모델의 독립 재현</strong>(<code>pipeline/coolwind/06_a4_report.md</code>): 실험 코드를 보지 않고 원자료와 정의만으로 독립 계산한 기본 랜덤포레스트(112밤 784행, n_estimators=500, 규제 없음)에서도 C_flow 제외 RMSE <strong>1.166℃</strong>에서 포함 <strong>0.948℃</strong>로 <strong>0.218℃</strong> 줄어(학습 목표 6곳 재중심화 시 1.075℃ → 0.827℃, 0.248℃ 감소) 같은 방향이 확인되었습니다.
@@ -1204,24 +1204,24 @@
           <div class="story-step-header">
             <div class="step-badge">
               <span class="step-num">6</span>
-              <h3 class="story-title">이렇게 쓸 수 있다 (시민 코스, 행정 검토)</h3>
+              <h3 class="story-title">이렇게 쓸 수 있다 (현장 확인 후보 구간, 행정 검토)</h3>
             </div>
-            <button type="button" class="btn-map-sync" onclick="applyPreset('citizen')">시민 코스 보기</button>
+            <button type="button" class="btn-map-sync" onclick="applyPreset('citizen')">후보 구간 보기</button>
           </div>
           <div class="story-body">
             <p>
-              같은 분석 격자 위에서 도출한 지표를 시민 보행 안내와 도시계획 사전 검토라는 두 가지 용도로 연결했습니다.
+              같은 분석 격자 위에서 도출한 지표를 시민 보행 탐색 안내와 도시계획 사전 검토라는 두 가지 용도로 연결했습니다.
             </p>
             <p>
-              <strong>1) 시민용 체감 찬바람길 등급(1~5등급)과 추천 코스 8곳:</strong> 보행 영역(반경 300m 시가지 비율 0.3 이상, 유효 <strong>266,611격자</strong>)에서 구군 간 공정 비교를 위해 대구 전역 공통식(<code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>)의 백분위로 1등급(상위 10%)부터 5등급(하위 25%, 열기 정체 주의 구간)을 매겼습니다. 1~2등급 수변과 공원이 이어진 후보 <strong>41곳</strong> 중 하천별 대표성을 고려해 <strong>신천 수변 코스(CRS_01, 15.65km)</strong>, <strong>금호강 수변 코스(CRS_02, 11.08km)</strong>, <strong>팔거천 수변 코스(CRS_03, 10.38km, 공원 12곳 연결)</strong> 등 <strong>8개 추천 코스</strong>를 선정했습니다.
+              <strong>1) 찬바람길 탐색 등급(흐름 잠재력과 수변/공원 접근성 결합)과 현장 확인이 필요한 후보 구간 8곳:</strong> 보행 영역(반경 300m 시가지 비율 0.3 이상, 유효 <strong>266,611격자</strong>)에서 구군 간 공정 비교를 위해 대구 전역 공통식(<code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>)의 백분위로 1등급(상위 10%)부터 5등급(하위 25%, 하위 구간)까지 매겼습니다. 1~2등급 수변과 공원이 이어진 후보 <strong>41곳</strong> 중 하천별 대표성을 고려해 <strong>신천 수변 코스(CRS_01, 15.65km)</strong>, <strong>금호강 수변 코스(CRS_02, 11.08km)</strong>, <strong>팔거천 수변 코스(CRS_03, 10.38km, 공원 12곳 연결)</strong> 등 실제 보행로 연결성, 횡단 가능성, 야간 안전에 대한 <strong>현장 확인이 필요한 후보 구간 8개</strong>를 추렸습니다.
             </p>
             <p>
-              <strong>2) 행정용 길목 막힘 위험 지수(R_block, 0~100)와 건물 높이 비교:</strong> 상류 300m C_flow가 대구 상위 20%(<strong>25.682점</strong> 이상)이면서 하류 시가지 비율이 <strong>0.7</strong> 이상인 후보 <strong>1,224격자</strong>에서 WorldCover 기반 막힘 지수 상위 15곳(BLK_01~BLK_15)을 추렸습니다. 다만 아래 보강 검증에서 국토교통부 건물 높이 자료를 반영한 15곳과 반경 500m 내 <strong>7곳(46.7%)</strong>만 겹쳤으므로, WorldCover 기반 지도는 녹지 연결과 수변 보식 탐색용 1차 스크리닝으로만 쓰고 건축 밀도 심의에는 건물 높이를 직접 반영해야 합니다.
+              <strong>2) 행정용 길목 막힘 위험 지수(R_block, 0~100)와 건물 높이 비교:</strong> 기본안(02)은 건물 높이를 쓰지 않고 상류 300m C_flow가 대구 상위 20%(<strong>25.682점</strong> 이상)이면서 하류 시가지 비율이 <strong>0.7</strong> 이상인 후보 <strong>1,224격자</strong>에서 WorldCover 기반 막힘 지수 상위 15곳(BLK_01~BLK_15)을 추렸습니다. 06 보강 실험에서 국토교통부 건물 높이 자료를 반영한 15곳과 반경 500m 내 <strong>7곳(46.7%)</strong>이 겹쳤으나, 건물안은 하류 건물막힘 70백분위 이상 및 높이 유효 격자 80% 이상(10,994격자)을 사용해 <strong>후보 조건이 달라 건물 높이 효과만 분리할 수 없습니다.</strong> WorldCover 기본안은 녹지 연결 탐색용 1차 스크리닝으로만 쓰고 건축 밀도 심의에는 건물 높이를 직접 반영해야 합니다.
             </p>
             <figure class="story-figure">
-              <img src="assets/map_04_citizen_coolwind_walk_grades.png" alt="시민용 열대야 저녁 체감 찬바람길 등급과 추천 코스 8곳 지도" onclick="openLightbox(this.src, this.alt)" />
+              <img src="assets/map_04_citizen_coolwind_walk_grades.png" alt="[시민용] 찬바람길 탐색 등급과 현장 확인이 필요한 후보 구간 8곳 지도" onclick="openLightbox(this.src, this.alt)" />
               <figcaption class="story-figcaption">
-                [단계 6 지도] 시민 체감 찬바람길 등급(1~5등급)과 추천 야간 산책 코스 8곳. 등급은 백분위 순위이며 실측 기온 차이가 아님 (클릭하면 크게 봅니다)
+                [단계 6 지도] [시민용] 찬바람길 탐색 등급(흐름 잠재력과 수변/공원 접근성 결합)과 현장 확인이 필요한 후보 구간 8곳. 등급은 백분위 순위이며 실측 기온 차이가 아님 (클릭하면 크게 봅니다)
               </figcaption>
             </figure>
           </div>
@@ -1261,7 +1261,7 @@
         <div>
           <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text);">1) 건물 높이 기반 막힘 지점 상위 15곳 (06:B, 클릭 시 지도 이동)</h3>
           <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;">
-            필드 <code>A16</code>을 높이(m)로 매핑한 통상 스키마 가정 결과입니다(층수 <code>A26</code>와 순위 상관 0.891, 층당 중앙값 3.82m, 공식 명세 미확인). 하류 높이 유효 격자 80% 이상 후보 10,994격자 중 선정했습니다.
+            필드 <code>A16</code>을 높이(m)로 매핑한 통상 스키마 가정 결과입니다(층수 <code>A26</code>와 순위 상관 0.891, 층당 중앙값 3.82m, 공식 명세 미확인). 하류 건물막힘 70백분위 이상 및 높이 유효 격자 80% 이상 후보 10,994격자 중 선정했으며, 기본안(하류 시가지 비율 0.7 이상, 1,224격자)과 후보 조건이 달라 건물 높이 효과만 분리할 수 없습니다.
           </p>
           <div class="table-wrap">
             <table class="data-table" style="min-width: 520px;">
@@ -1319,8 +1319,8 @@
           <div class="gallery-caption"><strong>[지도 3]</strong> 대구시 도시공원(672곳) 영향권과 가로수(97,618그루, 6개 구) 징검다리 분포</div>
         </div>
         <div class="gallery-item">
-          <img src="assets/map_05_admin_blockage_risk_hotspots.png" alt="행정용 찬 공기 유입 길목 막힘 위험 지수와 녹지 단절 검토 지점 15곳" onclick="openLightbox(this.src, this.alt)" />
-          <div class="gallery-caption"><strong>[지도 5]</strong> 행정용 길목 막힘 위험 지수(R_block)와 WorldCover 기반 검토 지점 15곳</div>
+          <img src="assets/map_05_admin_blockage_risk_hotspots.png" alt="[행정용] 찬 공기 유입 길목 막힘 위험 지수와 녹지 단절 검토 지점 (기본안: 건물 높이를 반영하지 않은 WorldCover 시가지 비율과 녹지 단절도 기반)" onclick="openLightbox(this.src, this.alt)" />
+          <div class="gallery-caption"><strong>[지도 5]</strong> [행정용] 찬 공기 유입 길목 막힘 위험 지수와 녹지 단절 검토 지점 15곳 (기본안: 건물 높이를 반영하지 않은 WorldCover 시가지 비율과 녹지 단절도 기반)</div>
         </div>
         <div class="gallery-item">
           <img src="assets/chart_04_sensitivity_robustness.png" alt="토지피복 가중치, 시가지 감쇠 계수, 관측소 버퍼 반경 민감도 실험 그래프" onclick="openLightbox(this.src, this.alt)" />
@@ -1333,7 +1333,7 @@
     <section class="section-card" id="section-data">
       <h2 class="section-title">데이터 출처와 라이선스</h2>
       <p class="section-desc">
-        대구광역시 공공데이터 5종과 기상청 공공데이터 5종(보강 야간 바람 25,774행 포함)을 핵심 자료로 사용하고, 지형(Copernicus DEM), 토지피복(ESA WorldCover), 하천 및 행정경계(OpenStreetMap), 국토교통부 GIS건물통합정보(보강 382,695동)를 보조 공간자료로 결합했습니다. 수치는 <code>02_analysis_results.json</code> 및 <code>06_experiments.json</code>과 동일합니다.
+        대구광역시 공공데이터 5종과 기상청 공공데이터 5종(보강 야간 바람 25,774행 포함)을 핵심 자료로 사용하고, 지형(Copernicus DEM), 토지피복(ESA WorldCover), 하천 및 행정경계(OpenStreetMap), 국토교통부 GIS건물통합정보(보강 382,695동)를 보조 공간자료로 결합했습니다. 수치는 <code>02_analysis_results.json</code>, <code>06_experiments.json</code>, <code>07d_extra.json</code> 및 독립 재현 보고서(<code>06_a4_report.md</code>) 출처에 따릅니다.
       </p>
       <div class="table-wrap">
         <table class="data-table">
@@ -1376,9 +1376,9 @@
         </div>
 
         <div class="method-box">
-          <h4>3. 시민 체감 등급 (1~5등급)과 행정 막힘 위험 지수 (R_block, 0~100)</h4>
+          <h4>3. 찬바람길 탐색 등급 (1~5등급)과 행정 막힘 위험 지수 (R_block, 0~100)</h4>
           <p>
-            보행 영역(반경 300m 시가지 0.3 이상, 수면 0.5 미만)에서 달서구와 달성군의 가로수 자료 부재를 고려해 대구 전역 공통식 <code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>의 백분위(상위 10%, 25%, 50%, 75%)로 1~5등급을 부여했습니다. 기본 막힘 위험 지수는 반경 300m 상류 평균 C_flow와 하류 시가지 비율, 하류 녹지 단절도 <code>(1 - G_down)</code>의 곱을 정규화했으며, 건물 실험안은 하류 건폐율 × 평균 높이의 정규화 값을 곱해 비교했습니다.
+            보행 영역(반경 300m 시가지 0.3 이상, 수면 0.5 미만)에서 달서구와 달성군의 가로수 자료 부재를 고려해 대구 전역 공통식 <code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>의 백분위(상위 10%, 25%, 50%, 75%)로 <strong>찬바람길 탐색 등급(흐름 잠재력과 수변/공원 접근성 결합)</strong> 1~5등급을 부여했습니다. 기본 막힘 위험 지수는 반경 300m 상류 평균 C_flow와 하류 시가지 비율, 하류 녹지 단절도 <code>(1 - G_down)</code>의 곱을 정규화했으며, 건물 실험안은 하류 건폐율 × 평균 높이의 정규화 값을 곱해 비교했습니다.
           </p>
         </div>
 
@@ -1395,13 +1395,13 @@
         <div class="method-box">
           <h4>5. 의사 지형과 등급식 민감도 실험 (06 보강 E3)</h4>
           <ul>
-            <li><strong>시가지 의사 지형(150m / 330m / 630m 창):</strong> 시가지 격자(173,627 / 258,739 / 310,215개) 고도를 주변 비시가지 최솟값으로 하향 보정(중앙값 2.06m / 4.58m / 7.79m)해 재계산하면, <strong>추천 코스 8곳은 8 / 8 / 7곳이 유지</strong>되고 기존 경로의 1~2등급 유지도 8곳 전부 통과했습니다. 반면 <strong>유입 길목 상위 15곳은 4곳(26.7%) / 5곳(33.3%) / 2곳(13.3%)만 유지</strong>되어 좁은 길목 순위는 DSM 표면 변화에 크게 흔들렸습니다.</li>
-            <li><strong>시민 등급식 구조 변경:</strong> 가중합 비율 변경(<code>0.80:0.20</code> / <code>0.50:0.50</code>)에서는 1~2등급 Jaccard <strong>0.666 / 0.760</strong>, 재선정 코스 <strong>5 / 6곳</strong>이 유지되었으나, C_flow에 접근성을 곱하는 조건부식(<code>a=0.5 / a=1.0</code>)에서는 1~2등급 Jaccard <strong>0.398 / 0.433</strong>, 재선정 코스 <strong>4 / 3곳</strong>으로 낮아져 등급식 가정에 민감했습니다.</li>
+            <li><strong>시가지 의사 지형(150m / 330m / 630m 창):</strong> 시가지 격자(173,627 / 258,739 / 310,215개) 고도를 주변 비시가지 최솟값으로 하향 보정(중앙값 2.06m / 4.58m / 7.79m)해 재계산하면, <strong>현장 확인이 필요한 후보 구간 8곳은 90m 이내 양방향 포함률 50% 이상 매칭 기준으로 8 / 8 / 7곳이 유지</strong>되고 기존 경로의 1~2등급 유지도 8곳 전부 통과했습니다. 반면 <strong>유입 길목 상위 15곳은 4곳(26.7%) / 5곳(33.3%) / 2곳(13.3%)만 유지</strong>되어 좁은 길목 순위는 DSM 표면 변화에 크게 흔들렸습니다.</li>
+            <li><strong>찬바람길 탐색 등급식 구조 변경:</strong> 가중합 비율 변경(<code>0.80:0.20</code> / <code>0.50:0.50</code>)에서는 1~2등급 Jaccard <strong>0.666 / 0.760</strong>, 재선정 구간 <strong>5 / 6곳</strong>이 유지되었으나, C_flow에 접근성을 곱하는 조건부식(<code>a=0.5 / a=1.0</code>)에서는 1~2등급 Jaccard <strong>0.398 / 0.433</strong>, 재선정 구간 <strong>4 / 3곳</strong>으로 낮아져 등급식 가정에 민감했습니다.</li>
           </ul>
           <figure class="story-figure" style="margin-top: 10px;">
-            <img src="assets/exp_e3_sensitivity.png" alt="시가지 의사 지형 창폭별 길목과 코스 유지율 및 시민 등급식 변경 민감도" onclick="openLightbox(this.src, this.alt)" />
+            <img src="assets/exp_e3_sensitivity.png" alt="시가지 의사 지형 창폭별 길목과 후보 구간 유지율 및 찬바람길 탐색 등급식 변경 민감도" onclick="openLightbox(this.src, this.alt)" />
             <figcaption class="story-figcaption">
-              [민감도 06:E3] (좌) 시가지 의사 지형 창폭별 길목 상위 15(녹색) 대 추천 코스(빨강) 유지율, (우) 시민 등급식 변경에 따른 1~2등급 일치율과 코스 유지율 (클릭하면 크게 봅니다)
+              [민감도 06:E3] (좌) 시가지 의사 지형 창폭별 길목 상위 15(녹색) 대 후보 구간(빨강) 유지율, (우) 찬바람길 탐색 등급식 변경에 따른 1~2등급 일치율과 후보 구간 유지율 (클릭하면 크게 봅니다)
             </figcaption>
           </figure>
         </div>
@@ -1414,24 +1414,24 @@
         </p>
         <ol class="limitation-list">
           <li>
-            <strong>관측소 실측 표본(n=7)과 시가지 통제 편순위상관 비유의:</strong>
-            패널 행은 832개 관측소-밤이지만 공간 위치의 독립 표본은 <strong>7곳</strong>뿐입니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳 시간자료 없음). 7곳에서 맑은 밤과 흐린 밤의 냉각 폭 차이와 C_flow의 단순 순위 상관은 <strong>0.857</strong>(p=0.0137)이지만, <strong>시가지 비율을 통제한 편순위상관은 0.639(근사 p=0.1719)로 유의하지 않습니다.</strong>
+            <strong>관측소 실측 표본(n=7)과 분석 대상별 편순위상관 구분:</strong>
+            패널 행은 832개 관측소-밤(10정시 완비 기준)이지만 공간 위치의 독립 표본은 <strong>7곳</strong>뿐입니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳 시간자료 없음). 열대야 31일 밤 최저기온과 C_flow의 순위상관은 <strong>-0.929</strong>(p=0.0025), 시가지 비율을 통제한 편순위상관은 <strong>-0.828</strong>(근사 p 약 0.042, n=7로 검정력 매우 낮음)입니다. 반면 맑은 밤과 흐린 밤의 냉각 폭 차이(06 실험 E2)와 C_flow의 단순 순위상관은 <strong>+0.857</strong>(p=0.0137)이나, <strong>시가지 비율 통제 편순위상관은 +0.639(근사 p=0.1719)로 유의하지 않습니다.</strong>
           </li>
           <li>
             <strong>야간 바람 상류 정렬은 달성 한 곳만 높음:</strong>
-            AWS 6곳의 야간 바람 대조 결과, 여름 전체 기간에서 <strong>달성 한 곳만 맑은 밤 상류 45도 이내 정렬(56.84%)이 흐린 밤(40.56%)보다 뚜렷이 높고 절반을 넘었습니다.</strong> 옥포(44.16% 대 33.56%)는 절반 미만, 하빈(30.83% 대 33.54%)과 대구서구(17.97% 대 19.50%)는 차이가 없거나 낮았으며, 대구북구와 신암은 90m 이상 상류 경로가 잡히지 않았습니다. 즉, 30m DEM 흐름 경로가 모든 관측 지점의 실제 야간 주풍향과 일치한다고 볼 수 없습니다.
+            AWS 6곳의 야간 바람 대조 결과, 여름 전체 기간에서 <strong>달성 한 곳만 맑은 밤 상류 45도 이내 정렬(56.84%)이 흐린 밤(40.56%)보다 높고 절반을 넘었습니다.</strong> 옥포(44.16% 대 33.56%)는 절반 미만, 하빈(30.83% 대 33.54%)과 대구서구(17.97% 대 19.50%)는 차이가 없거나 낮았으며, 대구북구와 신암은 90m 이상 상류 경로가 잡히지 않았습니다. 즉, 30m DEM 흐름 경로가 모든 관측 지점의 실제 야간 주풍향과 일치한다고 볼 수 없습니다.
           </li>
           <li>
             <strong>DSM 표면 모델 왜곡과 길목 상위 15곳 민감성:</strong>
-            Copernicus DEM은 건물과 수목 높이가 섞인 표면 모델(DSM)입니다. 의사 지형 실험에서 추천 코스 8곳은 7~8곳이 유지되었으나 <strong>좁은 유입 길목 상위 15곳은 2~5곳만 유지</strong>되어 수문 흐름 누적 방식(MFD)이 미세 지형 변화에 민감함이 확인되었습니다. 또한 최솟값 필터는 진정한 건물 제거 DEM이 아니며 비시가지 수목 DSM 왜곡은 남습니다.
+            Copernicus DEM은 건물과 수목 높이가 섞인 표면 모델(DSM)입니다. 의사 지형 실험에서 현장 확인이 필요한 후보 구간 8곳은 매칭 기준(90m 이내 양방향 포함률 50% 이상)으로 7~8곳이 유지되었으나 <strong>좁은 유입 길목 상위 15곳은 2~5곳만 유지</strong>되어 수문 흐름 누적 방식(MFD)이 미세 지형 변화에 민감함이 확인되었습니다. 또한 최솟값 필터는 진정한 건물 제거 DEM이 아니며 비시가지 수목 DSM 왜곡은 남습니다.
           </li>
           <li>
-            <strong>건물 높이 기반 막힘 지점은 기존과 일부만 겹침 및 필드 가정:</strong>
-            브이월드 건물 정보의 <code>A16</code> 높이 매핑은 공식 명세 확인 없이 통상 스키마를 적용한 가정이며(158,768동 높이 미상으로 제외), 건물 높이 기반 막힘 15곳은 기존 WorldCover 기반 15곳과 <strong>500m 내 7곳(46.7%)만 겹쳤습니다.</strong> 따라서 기존 막힘 지도는 녹지 단절 1차 탐색용으로만 쓰고 건축 밀도 심의에는 3차원 건물 높이를 직접 써야 합니다.
+            <strong>건물 높이 기반 막힘 지점은 후보 조건이 달라 건물 높이 효과만 분리할 수 없음:</strong>
+            브이월드 건물 정보의 <code>A16</code> 높이 매핑은 공식 명세 확인 없이 통상 스키마를 적용한 가정이며(158,768동 높이 미상으로 제외), 건물 높이 기반 막힘 15곳은 기존 WorldCover 기반 15곳과 <strong>500m 내 7곳(46.7%)만 겹쳤습니다.</strong> 또한 기본안(하류 시가지 비율 0.7 이상, 1,224격자)과 건물안(하류 건물막힘 70백분위 이상 및 높이 유효 격자 80% 이상, 10,994격자)은 <strong>후보 조건이 달라 건물 높이 효과만 분리할 수 없습니다.</strong> 기존 막힘 지도는 녹지 단절 1차 탐색용으로만 쓰고 건축 밀도 심의에는 3차원 건물 높이를 직접 써야 합니다.
           </li>
           <li>
-            <strong>하천 겹침, AI SHAP, 등급식 및 결측 자료의 한계:</strong>
-            하천 농축비(2.214배)는 지형 골짜기 구조 일치일 뿐 독립 검증이 아니며 공원 농축비(0.368배)는 1 미만입니다. TreeSHAP은 예측 모형의 기여 분해일 뿐 인과효과가 아니며, 조건부 시민 등급식 전환 시 1~2등급 Jaccard가 <strong>0.398~0.433</strong>까지 내려갑니다. 열대야 Sen 및 Mann-Kendall 검정은 자기상관 미보정 기본 추정이고, 하늘 상태는 일평균 운량과 일강수 대리 기준이며, 달서구와 달성군 가로수 결측, 현존식생도와 비오톱 경계 부재, 군위군 범위 제외, 야간 조도 및 방범 CCTV 미결합도 남아 있습니다.
+            <strong>하천 겹침, AI SHAP, 탐색 등급식 및 결측 자료의 한계:</strong>
+            하천 농축비(2.214배)는 지형 골짜기 구조 일치일 뿐 독립 검증이 아니며 공원 농축비(0.368배)는 1 미만입니다. TreeSHAP은 예측 모형의 기여 분해일 뿐 인과효과가 아니며, 조건부 탐색 등급식 전환 시 1~2등급 Jaccard가 <strong>0.398~0.433</strong>까지 내려갑니다. 열대야 Sen 및 Mann-Kendall 검정은 자기상관 미보정 기본 추정이고, 하늘 상태는 강수 빈칸/0과 일평균 운량 대리 기준이며, 달서구와 달성군 가로수 결측, 현존식생도와 비오톱 경계 부재, 군위군 범위 제외, 실제 보행로 연결성, 횡단 가능성, 야간 조도 및 방범 CCTV 미결합도 남아 있습니다.
           </li>
         </ol>
       </section>
@@ -1451,7 +1451,7 @@
   </div>
 
   <footer class="site-footer">
-    대구 밤의 찬바람길 웹 시각화 페이지 | 모든 수치는 <code>pipeline/coolwind/02_analysis_results.json</code> 및 <code>pipeline/coolwind/06_experiments.json</code> 단일 출처 기준 | 배경지도: &copy; OpenStreetMap contributors (ODbL)
+    대구 밤의 찬바람길 웹 시각화 페이지 | 수치 출처: <code>pipeline/coolwind/02_analysis_results.json</code>, <code>pipeline/coolwind/06_experiments.json</code>, <code>pipeline/coolwind/07d_extra.json</code> 및 독립 재현 보고서(<code>pipeline/coolwind/06_a4_report.md</code>) | 배경지도: &copy; OpenStreetMap contributors (ODbL)
   </footer>
 
   <!-- Leaflet JS & Local Data Bundle -->
@@ -1461,6 +1461,34 @@
     // Ensure data is available locally via script tag (file:// compatible)
     const DATA = window.COOLWIND_DATA;
 
+    const EXP_B_TOP15 = [
+      {"rank": 1, "lat": 35.812625, "lon": 128.644038, "risk": 46.24, "district": "수성구", "upslope_c_flow": 25.87, "downslope_block": 0.0373, "valid_ratio": 0.819, "nearest_old": "BLK_15", "nearest_dist_m": 150.2},
+      {"rank": 2, "lat": 35.821311, "lon": 128.551841, "risk": 34.08, "district": "달서구", "upslope_c_flow": 28.06, "downslope_block": 0.0246, "valid_ratio": 0.806, "nearest_old": "BLK_11", "nearest_dist_m": 95.1},
+      {"rank": 3, "lat": 35.795198, "lon": 128.627853, "risk": 32.58, "district": "달성군", "upslope_c_flow": 28.43, "downslope_block": 0.0176, "valid_ratio": 0.86, "nearest_old": "BLK_06", "nearest_dist_m": 29.7},
+      {"rank": 4, "lat": 35.807716, "lon": 128.559962, "risk": 31.77, "district": "달서구", "upslope_c_flow": 29.34, "downslope_block": 0.0198, "valid_ratio": 0.94, "nearest_old": "BLK_09", "nearest_dist_m": 29.6},
+      {"rank": 5, "lat": 35.828026, "lon": 128.557243, "risk": 31.04, "district": "달서구", "upslope_c_flow": 27.04, "downslope_block": 0.0318, "valid_ratio": 0.808, "nearest_old": "BLK_02", "nearest_dist_m": 390.8},
+      {"rank": 6, "lat": 35.814725, "lon": 128.65071, "risk": 19.23, "district": "수성구", "upslope_c_flow": 25.69, "downslope_block": 0.039, "valid_ratio": 0.967, "nearest_old": "BLK_15", "nearest_dist_m": 523.9},
+      {"rank": 7, "lat": 35.8264, "lon": 128.674126, "risk": 17.89, "district": "수성구", "upslope_c_flow": 29.5, "downslope_block": 0.0126, "valid_ratio": 0.953, "nearest_old": "BLK_15", "nearest_dist_m": 2980.8},
+      {"rank": 8, "lat": 35.787271, "lon": 128.636704, "risk": 15.18, "district": "달성군", "upslope_c_flow": 25.92, "downslope_block": 0.0094, "valid_ratio": 0.832, "nearest_old": "BLK_06", "nearest_dist_m": 1167.1},
+      {"rank": 9, "lat": 35.7428, "lon": 128.429379, "risk": 12.62, "district": "달성군", "upslope_c_flow": 26.6, "downslope_block": 0.0097, "valid_ratio": 0.8, "nearest_old": "BLK_07", "nearest_dist_m": 1580.5},
+      {"rank": 10, "lat": 35.754721, "lon": 128.494554, "risk": 12.03, "district": "달성군", "upslope_c_flow": 28.21, "downslope_block": 0.0065, "valid_ratio": 0.875, "nearest_old": "BLK_01", "nearest_dist_m": 3028.1},
+      {"rank": 11, "lat": 35.892909, "lon": 128.46437, "risk": 11.63, "district": "달성군", "upslope_c_flow": 26.14, "downslope_block": 0.0091, "valid_ratio": 0.816, "nearest_old": "BLK_08", "nearest_dist_m": 95.3},
+      {"rank": 12, "lat": 35.754256, "lon": 128.451744, "risk": 8.92, "district": "달성군", "upslope_c_flow": 27.37, "downslope_block": 0.0045, "valid_ratio": 0.947, "nearest_old": "BLK_07", "nearest_dist_m": 2847.7},
+      {"rank": 13, "lat": 35.7318, "lon": 128.667428, "risk": 8.68, "district": "달성군", "upslope_c_flow": 27.87, "downslope_block": 0.005, "valid_ratio": 0.808, "nearest_old": "BLK_14", "nearest_dist_m": 0.1},
+      {"rank": 14, "lat": 35.760344, "lon": 128.434228, "risk": 8.3, "district": "달성군", "upslope_c_flow": 26.62, "downslope_block": 0.0047, "valid_ratio": 1.0, "nearest_old": "BLK_07", "nearest_dist_m": 3300.4},
+      {"rank": 15, "lat": 35.813762, "lon": 128.549085, "risk": 7.79, "district": "달서구", "upslope_c_flow": 25.85, "downslope_block": 0.0456, "valid_ratio": 0.825, "nearest_old": "BLK_11", "nearest_dist_m": 778.6}
+    ];
+
+    const EXP_W_STATIONS = {
+      "143": {"stn_id": 143, "name": "대구", "up_deg": 163.5, "up_dist": 189.2, "trop_reason": "맑은 열대야의 풍속 유효값 없음", "trop_valid_h": 0, "trop_calm_pct": null, "trop_spd": null, "trop_dir": null, "trop_align_pct": null, "clear_align_pct": null, "clear_n": 0, "cloudy_align_pct": null, "cloudy_n": 0},
+      "828": {"stn_id": 828, "name": "달성", "up_deg": 298.9, "up_dist": 102.9, "trop_reason": null, "trop_valid_h": 120, "trop_calm_pct": 24.2, "trop_spd": 1.1, "trop_dir": 180.0, "trop_align_pct": 43.96, "clear_align_pct": 56.84, "clear_n": 190, "cloudy_align_pct": 40.56, "cloudy_n": 392},
+      "845": {"stn_id": 845, "name": "대구북구", "up_deg": null, "up_dist": null, "trop_reason": "관측소 격자에서 우세 상류 경로가 90m 이상 이어지지 않음", "trop_valid_h": 120, "trop_calm_pct": 31.7, "trop_spd": 0.87, "trop_dir": 270.0, "trop_align_pct": null, "clear_align_pct": null, "clear_n": 0, "cloudy_align_pct": null, "cloudy_n": 0},
+      "846": {"stn_id": 846, "name": "대구서구", "up_deg": 218.8, "up_dist": 123.3, "trop_reason": null, "trop_valid_h": 120, "trop_calm_pct": 8.3, "trop_spd": 1.57, "trop_dir": 270.0, "trop_align_pct": 25.45, "clear_align_pct": 17.97, "clear_n": 217, "cloudy_align_pct": 19.5, "cloudy_n": 436},
+      "860": {"stn_id": 860, "name": "신암", "up_deg": null, "up_dist": null, "trop_reason": "관측소 격자에서 우세 상류 경로가 90m 이상 이어지지 않음", "trop_valid_h": 120, "trop_calm_pct": 7.5, "trop_spd": 1.19, "trop_dir": 292.5, "trop_align_pct": null, "clear_align_pct": null, "clear_n": 0, "cloudy_align_pct": null, "cloudy_n": 0},
+      "991": {"stn_id": 991, "name": "옥포", "up_deg": 185.7, "up_dist": 250.0, "trop_reason": null, "trop_valid_h": 120, "trop_calm_pct": 5.8, "trop_spd": 1.58, "trop_dir": 247.5, "trop_align_pct": 46.9, "clear_align_pct": 44.16, "clear_n": 231, "cloudy_align_pct": 33.56, "cloudy_n": 450},
+      "992": {"stn_id": 992, "name": "하빈", "up_deg": 88.4, "up_dist": 316.4, "trop_reason": null, "trop_valid_h": 120, "trop_calm_pct": 40.8, "trop_spd": 1.04, "trop_dir": 180.0, "trop_align_pct": 22.54, "clear_align_pct": 30.83, "clear_n": 133, "cloudy_align_pct": 33.54, "cloudy_n": 322}
+    };
+
     let map;
     const layers = {
       grade: null,
@@ -1469,6 +1497,7 @@
       corridors: null,
       corridorUpstream: null,
       hotspots: null,
+      bhotspots: null,
       stations: null,
       waterways: null,
       districts: null,
@@ -1478,6 +1507,7 @@
       courses: {},
       corridors: {},
       hotspots: {},
+      bhotspots: {},
       stations: {},
       districts: {},
     };
@@ -1697,19 +1727,19 @@
 
         const popupHtml = `
           <div class="popup-card">
-            <div class="popup-header">[추천 코스 ${courseNum}] ${p.course_name}</div>
+            <div class="popup-header">[현장 확인 후보 구간 ${courseNum}] ${p.course_name}</div>
             <table class="popup-table">
               <tr><td class="k">지나는 구군</td><td class="v">${p.district}</td></tr>
-              <tr><td class="k">찬바람길 체감 등급</td><td class="v">${p.grade}등급 (보행 영역 상위 ${fmt(p.top_percentile_pct, "%")})</td></tr>
+              <tr><td class="k">찬바람길 탐색 등급</td><td class="v">${p.grade}등급 (보행 영역 상위 ${fmt(p.top_percentile_pct, "%")})</td></tr>
               <tr><td class="k">평균 보행 점수 (S_walk_all)</td><td class="v">${fmt(p.mean_walk_cool_score)}점</td></tr>
-              <tr><td class="k">코스 연장 길이</td><td class="v">${fmt(p.length_km, "km")} (${fmt(det.path_cells, "격자")})</td></tr>
+              <tr><td class="k">구간 연장 길이</td><td class="v">${fmt(p.length_km, "km")} (${fmt(det.path_cells, "격자")})</td></tr>
               <tr><td class="k">시점 ~ 종점</td><td class="v">${p.start_point.name} ~ ${p.end_point.name}</td></tr>
               <tr><td class="k">연결된 도시공원 수</td><td class="v">${fmt(p.connected_parks_count, "곳")}</td></tr>
               <tr><td class="k">경로 50m 이내 가로수</td><td class="v">${treesInfo}</td></tr>
             </table>
             <div class="popup-note">
               <strong>연결 공원:</strong> ${parksList}<br />
-              ※ 등급은 흐름 간이 지표와 수변 및 공원 연결성의 백분위 등급이며 실측 기온 저감치가 아닙니다.
+              ※ 찬바람길 탐색 등급은 흐름 잠재력과 수변 및 공원 접근성을 결합한 백분위 등급이며 실측 기온 저감치가 아닙니다. 보행로 연결성, 횡단 가능성, 야간 안전은 현장 확인이 필요한 후보 구간입니다.
             </div>
           </div>
         `;
@@ -1730,14 +1760,14 @@
 
         casing.bindPopup(popupHtml);
         coreLine.bindPopup(popupHtml);
-        coreLine.bindTooltip(`코스 ${courseNum}: ${p.course_name} (${p.grade}등급, ${p.length_km}km)`, { sticky: true });
+        coreLine.bindTooltip(`현장 확인 후보 구간 ${courseNum}: ${p.course_name} (${p.grade}등급, ${p.length_km}km)`, { sticky: true });
 
         layers.courses.addLayer(casing);
         layers.courses.addLayer(coreLine);
         featureRefs.courses[p.course_id] = { line: coreLine, props: p };
       });
 
-      // 8. Admin blockage risk hotspots (15 Points - default unchecked or toggleable)
+      // 8. Admin blockage risk hotspots - Baseline WorldCover (15 Points)
       layers.hotspots = L.layerGroup();
       DATA.geojson.hotspots.features.forEach(function (feature) {
         const p = feature.properties;
@@ -1748,7 +1778,7 @@
 
         const popupHtml = `
           <div class="popup-card">
-            <div class="popup-header" style="border-bottom-color:#7f0000;">[막힘 위험 ${p.hotspot_rank}위] ${p.hotspot_id} (${det.district || ""})</div>
+            <div class="popup-header" style="border-bottom-color:#7f0000;">[막힘 위험 기존안 ${p.hotspot_rank}위] ${p.hotspot_id} (${det.district || ""})</div>
             <table class="popup-table">
               <tr><td class="k">위치 설명</td><td class="v">${p.location_name}</td></tr>
               <tr><td class="k">길목 막힘 위험 지수 (R_block)</td><td class="v">${fmt(p.blockage_risk_score)}점 (0~100)</td></tr>
@@ -1760,7 +1790,7 @@
               <tr><td class="k">행정 검토 제안</td><td class="v" style="color:#9b2226;">${p.admin_review_recommendation}</td></tr>
             </table>
             <div class="popup-note">
-              ${p._reason || "WorldCover 시가지 밀도 및 녹지 단절도 기반 대체안"}
+              기본안(02)은 건물 높이를 쓰지 않은 WorldCover 시가지 비율 및 녹지 단절도 기반 1차 스크리닝이며, 건물 높이 비교는 06 보강 실험에서 수행했습니다.
             </div>
           </div>
         `;
@@ -1775,13 +1805,48 @@
           icon: pinIcon,
           pane: "pointPane",
         }).bindPopup(popupHtml);
-        marker.bindTooltip(`막힘 위험 ${p.hotspot_rank}위 (${p.blockage_risk_score}점): ${p.admin_review_recommendation}`);
+        marker.bindTooltip(`막힘 기존안 ${p.hotspot_rank}위 (${p.blockage_risk_score}점): ${p.admin_review_recommendation}`);
 
         layers.hotspots.addLayer(marker);
         featureRefs.hotspots[p.hotspot_id] = { marker, props: p };
       });
 
-      // 9. KMA Weather Stations (14 Points)
+      // 8b. Building-height blockage hotspots (06:B, 15 Points)
+      layers.bhotspots = L.layerGroup();
+      EXP_B_TOP15.forEach(function (b) {
+        const popupHtml = `
+          <div class="popup-card">
+            <div class="popup-header" style="border-bottom-color:#d9480f;">[건물 높이 막힘 ${b.rank}위] ${b.district}</div>
+            <table class="popup-table">
+              <tr><td class="k">건물 막힘 위험 지수 (0~100)</td><td class="v">${b.risk}점</td></tr>
+              <tr><td class="k">상류 C_flow</td><td class="v">${b.upslope_c_flow}점</td></tr>
+              <tr><td class="k">하류 건물막힘(건폐율×높이)</td><td class="v">${b.downslope_block}</td></tr>
+              <tr><td class="k">하류 높이 유효 격자 비율</td><td class="v">${Math.round(b.valid_ratio * 1000) / 10}%</td></tr>
+              <tr><td class="k">최근접 기존 막힘 지점</td><td class="v">${b.nearest_old} (${b.nearest_dist_m}m)</td></tr>
+            </table>
+            <div class="popup-note">
+              국토교통부 건물통합정보 A16 높이 가정 결과입니다(층수 A26와 순위 상관 0.891, 공식 명세 미확인). 기존 15곳과 500m 내 7곳(46.7%) 겹치며, 후보 조건이 달라 건물 높이 효과만 분리할 수 없습니다.
+            </div>
+          </div>
+        `;
+
+        const pinIcon = L.divIcon({
+          className: "rank-pin rank-pin-bhotspot",
+          html: `<span>${b.rank}</span>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+        });
+        const marker = L.marker([b.lat, b.lon], {
+          icon: pinIcon,
+          pane: "pointPane",
+        }).bindPopup(popupHtml);
+        marker.bindTooltip(`건물 높이 막힘 ${b.rank}위 (${b.district}, ${b.risk}점)`);
+
+        layers.bhotspots.addLayer(marker);
+        featureRefs.bhotspots[String(b.rank)] = { marker, props: b };
+      });
+
+      // 9. KMA Weather Stations (14 Points, including 06:W night wind results)
       layers.stations = L.layerGroup().addTo(map);
       DATA.geojson.stations.features.forEach(function (feature) {
         const p = feature.properties;
@@ -1793,6 +1858,25 @@
           if (diff143 === 0) diffText = "기준 관측소 (0.0℃)";
           else if (diff143 < 0) diffText = `${diff143}℃ (대구 143보다 ${Math.abs(diff143)}℃ 더 시원함)`;
           else diffText = `+${diff143}℃ (대구 143보다 ${diff143}℃ 더 높음)`;
+        }
+
+        const w = EXP_W_STATIONS[String(p.stn_id)];
+        let windRows = "";
+        if (w) {
+          const tropWind = w.trop_valid_h > 0
+            ? `무풍 ${w.trop_calm_pct}%, 평균 ${w.trop_spd}m/s, 주풍향 ${w.trop_dir}°`
+            : (w.trop_reason || "자료 없음");
+          const tropAlign = w.trop_align_pct !== null
+            ? `${w.trop_align_pct}% (상류 ${w.up_deg}°)`
+            : (w.trop_reason || "해당 없음");
+          const skyAlign = (w.clear_align_pct !== null && w.cloudy_align_pct !== null)
+            ? `맑음 ${w.clear_align_pct}% 대 흐림 ${w.cloudy_align_pct}%`
+            : (w.trop_valid_h === 0 ? "바람 자료 없음" : "90m 이상 상류 경로 미형성");
+          windRows = `
+            <tr><td class="k">맑은 열대야 밤 바람(06:W)</td><td class="v">${tropWind}</td></tr>
+            <tr><td class="k">열대야 상류 45도 정렬</td><td class="v">${tropAlign}</td></tr>
+            <tr><td class="k">여름 맑음 대 흐림 정렬</td><td class="v">${skyAlign}</td></tr>
+          `;
         }
 
         const labelText = hasObs
@@ -1818,10 +1902,11 @@
               <tr><td class="k">대구(ASOS 143) 대비 실측 차이</td><td class="v">${diffText}</td></tr>
               <tr><td class="k">고도 보정 밤 최저기온</td><td class="v">${fmt(p.elevation_adjusted_night_tmin_c, "℃")}</td></tr>
               <tr><td class="k">열대야 야간 냉각 폭(18시-최저)</td><td class="v">${fmt(p.observed_night_cooling_range_c, "℃")}</td></tr>
-              <tr><td class="k">맑은 날(26일) 밤 최저 / 냉각 폭</td><td class="v">${fmt(det.clear_night_tmin_mean_c, "℃")} / ${fmt(det.clear_night_cooling_range_c, "℃")}</td></tr>
+              <tr><td class="k">맑은 날(02 기준) 밤 최저 / 냉각 폭</td><td class="v">${fmt(det.clear_night_tmin_mean_c, "℃")} / ${fmt(det.clear_night_cooling_range_c, "℃")}</td></tr>
+              ${windRows}
             </table>
             <div class="popup-note">
-              ${p._reason ? p._reason : "2026년 열대야 31일 야간(21시~다음 날 06시) 실측 시간자료 기준. 관측소 7곳 소표본이며 시가지 비율과 함께 움직이는 효과가 포함되어 있습니다."}
+              ${p._reason ? p._reason : "2026년 열대야 31일 야간(21시~다음 날 06시, 02 관측소 비교 밤 6시간 이상 기준) 실측 시간자료입니다. 관측소 7곳 소표본이라 밤 최저기온 편상관(-0.828, p 약 0.042)은 검정력이 낮고, 냉각 폭 차이 편상관(+0.639, p=0.1719)은 유의하지 않습니다."}
             </div>
           </div>
         `;
@@ -1876,6 +1961,7 @@
           courses: true,
           corridors: false,
           hotspots: false,
+          bhotspots: false,
           stations: false,
           waterways: true,
           districts: true,
@@ -1889,6 +1975,7 @@
           courses: false,
           corridors: true,
           hotspots: false,
+          bhotspots: false,
           stations: true,
           waterways: true,
           districts: true,
@@ -1902,11 +1989,12 @@
           courses: false,
           corridors: true,
           hotspots: true,
+          bhotspots: true,
           stations: false,
           waterways: true,
           districts: true,
         });
-        switchExplorerTab("hotspots");
+        switchExplorerTab("bhotspots");
         map.flyTo([35.805, 128.555], 11, { duration: 0.6 });
       } else if (mode === "station") {
         setLayerChecks({
@@ -1915,12 +2003,31 @@
           courses: false,
           corridors: false,
           hotspots: false,
+          bhotspots: false,
           stations: true,
           waterways: true,
           districts: true,
         });
         switchExplorerTab("stations");
         map.flyTo([35.85, 128.56], 11, { duration: 0.6 });
+      }
+    }
+
+    function focusBHotspot(rank) {
+      setLayerChecks({ bhotspots: true, hotspots: true });
+      const ref = featureRefs.bhotspots[String(rank)];
+      if (ref) {
+        map.flyTo([ref.props.lat, ref.props.lon], 14, { duration: 0.5 });
+        ref.marker.openPopup();
+      }
+    }
+
+    function focusStation(stnId) {
+      setLayerChecks({ stations: true });
+      const ref = featureRefs.stations[String(stnId)];
+      if (ref) {
+        map.flyTo([ref.props.lat, ref.props.lon], 13, { duration: 0.5 });
+        ref.marker.openPopup();
       }
     }
 
@@ -1982,6 +2089,19 @@
           };
           container.appendChild(div);
         });
+      } else if (tab === "bhotspots") {
+        EXP_B_TOP15.forEach(function (b) {
+          const div = document.createElement("div");
+          div.className = "explorer-item";
+          div.innerHTML = `
+            <div class="explorer-item-title">건물 ${b.rank}위 (${b.district}): 위험 ${b.risk}점</div>
+            <div class="explorer-item-meta">상류 C_flow ${b.upslope_c_flow}점 | 최근접 ${b.nearest_old} (${b.nearest_dist_m}m)</div>
+          `;
+          div.onclick = function () {
+            focusBHotspot(b.rank);
+          };
+          container.appendChild(div);
+        });
       } else if (tab === "stations") {
         const sortedSt = [...DATA.analysis.station_validation.stations_detail].sort((a, b) => {
           const aObs = a.observed_night_tmin_mean_c !== null ? 0 : 1;
@@ -1998,12 +2118,7 @@
             <div class="explorer-item-meta">500m C_flow: ${fmt(s.buffer_500m_c_flow, "점")} | ${tminStr}</div>
           `;
           div.onclick = function () {
-            setLayerChecks({ stations: true });
-            const ref = featureRefs.stations[String(s.stn_id)];
-            if (ref) {
-              map.flyTo([s.lat, s.lon], 13, { duration: 0.5 });
-              ref.marker.openPopup();
-            }
+            focusStation(s.stn_id);
           };
           container.appendChild(div);
         });
@@ -2038,8 +2153,97 @@
       }
     }
 
+    function renderExp06Tables() {
+      const bBody = document.getElementById("bhotspot-table-body");
+      if (bBody) {
+        bBody.innerHTML = "";
+        EXP_B_TOP15.forEach(function (b) {
+          const tr = document.createElement("tr");
+          tr.className = "clickable-row";
+          const overlapBadge = b.nearest_dist_m <= 500
+            ? `<strong>${b.nearest_old}</strong> (${b.nearest_dist_m}m, 500m 내)`
+            : `${b.nearest_old} (${b.nearest_dist_m}m)`;
+          tr.innerHTML = `
+            <td><strong>${b.rank}위</strong></td>
+            <td>${b.district}</td>
+            <td>${b.risk}점</td>
+            <td>${b.upslope_c_flow}점</td>
+            <td>${(b.valid_ratio * 100).toFixed(1)}%</td>
+            <td>${overlapBadge}</td>
+          `;
+          tr.onclick = function () {
+            focusBHotspot(b.rank);
+            document.getElementById("map").scrollIntoView({ behavior: "smooth", block: "center" });
+          };
+          bBody.appendChild(tr);
+        });
+      }
+
+      const wBody = document.getElementById("wind-table-body");
+      if (wBody) {
+        wBody.innerHTML = "";
+        Object.values(EXP_W_STATIONS).forEach(function (w) {
+          const tr = document.createElement("tr");
+          tr.className = "clickable-row";
+          const windSummary = w.trop_valid_h > 0
+            ? `${w.trop_calm_pct}% / ${w.trop_spd}m/s`
+            : "자료 없음 (결측)";
+          const dirSummary = w.trop_valid_h > 0
+            ? `${w.trop_dir}° (${w.up_deg !== null ? w.up_deg + "°" : "90m 미만"})`
+            : (w.up_deg !== null ? `자료 없음 (${w.up_deg}°)` : "자료 없음");
+          const tropAlign = w.trop_align_pct !== null ? `${w.trop_align_pct}%` : (w.trop_valid_h === 0 ? "자료 없음" : "90m 미만");
+          const skyAlign = (w.clear_align_pct !== null && w.cloudy_align_pct !== null)
+            ? `<strong>${w.clear_align_pct}%</strong> 대 ${w.cloudy_align_pct}%`
+            : (w.trop_valid_h === 0 ? "자료 없음" : "90m 미만");
+          tr.innerHTML = `
+            <td><strong>${w.name} (${w.stn_id})</strong></td>
+            <td>${windSummary}</td>
+            <td>${dirSummary}</td>
+            <td>${tropAlign}</td>
+            <td>${skyAlign}</td>
+          `;
+          tr.onclick = function () {
+            focusStation(w.stn_id);
+            document.getElementById("map").scrollIntoView({ behavior: "smooth", block: "center" });
+          };
+          wBody.appendChild(tr);
+        });
+      }
+    }
+
     function renderDatasetTable() {
-      const inv = DATA.analysis.datasets_inventory;
+      const baseInv = DATA.analysis.datasets_inventory
+        .filter((item) => item.dataset_id !== "molit_buildings")
+        .map((item) => {
+          if (item.dataset_id === "kma_hourly_14stations") {
+            return {
+              ...item,
+              name: "대구 주변 14개 지점 시간별 기온 (02 비교 및 06 패널)",
+              preprocessing_note: "원본 파일 2개(28,593행, 목록 외 3개 지점 포함). 02 관측소 비교는 야간 21~06시 중 밤 6시간 이상 관측된 밤 기준(열대야 31일, 7곳), 06 패널 분석은 6~9월 21~06시 10정시 완비 밤 기준(120밤, 832개 관측소-밤)으로 구분 적용"
+            };
+          }
+          return item;
+        });
+      const inv = [...baseInv,
+        {
+          role: "핵심_기상청공공데이터",
+          name: "관측소 시간별 바람 2026 여름 (06 보강)",
+          source_provider: "기상청 공공데이터포털 (OBS_AWS_TIM)",
+          license: "공공누리 1유형",
+          raw_row_or_pixel_count: 25774,
+          valid_row_or_pixel_count: 7167,
+          preprocessing_note: "AWS 6곳 야간(21~06시) 유효 풍속 7,167시간 추출, ASOS 143 풍속 결측은 0으로 바꾸지 않고 null 처리"
+        },
+        {
+          role: "보조_공간자료",
+          name: "국토교통부 GIS건물통합정보 (기본안 미사용, 06 보강 비교)",
+          source_provider: "국토교통부, 브이월드 (AL_D010_27)",
+          license: "공공누리",
+          raw_row_or_pixel_count: 382695,
+          valid_row_or_pixel_count: 330106,
+          preprocessing_note: "기본안(02)은 건물 높이를 쓰지 않았고, 건물 높이 비교는 06 보강 실험에서 수행함. 범위 밖 52,589동 제외, 사용 형상 330,106동 중 A16 높이 미상 158,768동은 임의 층수 환산 없이 분리(후보 조건이 달라 건물 높이 효과만 분리할 수 없음)"
+        }
+      ];
       const roleOrder = {
         "핵심_대구시공공데이터": 1,
         "핵심_기상청공공데이터": 2,
@@ -2064,8 +2268,8 @@
           <td><strong>${item.name}</strong></td>
           <td>${item.source_provider}</td>
           <td>${item.license}</td>
-          <td>${fmt(item.raw_row_or_pixel_count, "", "미확보")}</td>
-          <td>${fmt(item.valid_row_or_pixel_count, "", "미확보")}</td>
+          <td>${fmt(item.raw_row_or_pixel_count, "", "자료 없음")}</td>
+          <td>${fmt(item.valid_row_or_pixel_count, "", "자료 없음")}</td>
           <td>${noteText}</td>
         `;
         tbody.appendChild(tr);
@@ -2089,6 +2293,7 @@
     window.addEventListener("DOMContentLoaded", function () {
       initMap();
       switchExplorerTab("courses");
+      renderExp06Tables();
       renderDatasetTable();
     });
   </script>
