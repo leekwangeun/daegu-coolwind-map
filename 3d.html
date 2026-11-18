@@ -89,7 +89,7 @@
   </header>
 
   <section class="panel" aria-label="3D 보기 설정">
-    <p class="cap" id="cap">Copernicus DEM 지형(높이 과장), C_flow 상위 50% 격자, 현장 확인 후보 구간 8곳(노란 선), 도심 유입 길목 15곳(번호)</p>
+    <p class="cap" id="cap">Copernicus DEM 지형(높이 과장), C_flow 상위 50% 격자(대구 밖은 산지만), 현장 확인 후보 구간 8곳(노란 선), 도심 유입 길목 15곳(번호)</p>
     <div class="seg" role="group" aria-label="지표 고르기">
       <button type="button" id="drape-flow" aria-pressed="true">C_flow</button>
       <button type="button" id="drape-grade" aria-pressed="false">찬바람길 탐색 등급</button>
@@ -346,7 +346,7 @@
       document.getElementById("legend-flow").hidden = key !== "flow";
       document.getElementById("legend-grade").hidden = key !== "grade";
       document.getElementById("cap").textContent = key === "flow"
-        ? "Copernicus DEM 지형(높이 과장), C_flow 상위 50% 격자, 현장 확인 후보 구간 8곳(노란 선), 도심 유입 길목 15곳(번호)"
+        ? "Copernicus DEM 지형(높이 과장), C_flow 상위 50% 격자(대구 밖은 산지만), 현장 확인 후보 구간 8곳(노란 선), 도심 유입 길목 15곳(번호)"
         : "Copernicus DEM 지형(높이 과장), 찬바람길 탐색 등급 1~5등급, 현장 확인 후보 구간 8곳(노란 선), 도심 유입 길목 15곳(번호)";
     }
     document.getElementById("drape-flow").addEventListener("click", () => setDrape("flow"));
