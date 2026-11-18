@@ -1,0 +1,2 @@
+// Hillshade background generated from Copernicus DEM GLO-30
+window.COOLWIND_HILLSHADE = {"file": "data/hillshade.png", "crs": "EPSG:4326", "leaflet_bounds": [[35.6, 128.35], [36.05, 128.8]], "width": 1620, "height": 1620, "source": "Copernicus DEM GLO-30 hillshade (azimuth 315, altitude 45, vertical exaggeration 1.6)", "background": "#eaede8"};

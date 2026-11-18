@@ -1,0 +1,2 @@
+// C_flow overlay metadata (upper half of valid cells shown)
+window.COOLWIND_CFLOW = {"light": "data/cflow_light.png", "dark": "data/cflow_dark.png", "leaflet_bounds": [[35.6, 128.35], [36.05, 128.8]], "cut_percentile": 50, "light_stops": ["#a8ddb5", "#7bccc4", "#4eb3d3", "#2b8cbe", "#0868ac", "#084081", "#081d58"], "dark_stops": ["#1d6fa8", "#2b8cbe", "#41b6c4", "#7fcdbb", "#c7e9b4", "#edf8b1", "#ffffd9"]};
