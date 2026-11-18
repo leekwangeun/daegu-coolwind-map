@@ -664,6 +664,29 @@
       border: 2px solid #7f0000;
     }
 
+    .rank-pin-bhotspot {
+      background: #d9480f;
+      color: #ffffff;
+      border: 2px solid #ffffff;
+    }
+
+    .fig-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .fig-pair > * { min-width: 0; }
+
+    .clickable-row {
+      cursor: pointer;
+    }
+
+    .clickable-row:hover td {
+      background: #edf5ff !important;
+    }
+
     .station-pin {
       display: flex;
       align-items: center;
@@ -813,6 +836,9 @@
       .two-col-grid {
         grid-template-columns: 1fr;
       }
+      .fig-pair {
+        grid-template-columns: 1fr;
+      }
       .gallery-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -857,7 +883,7 @@
       </div>
       <h1 class="site-title">대구 밤의 찬바람길: 야간 찬 공기 흐름 간이 지표와 인터랙티브 지도</h1>
       <p class="site-subtitle">
-        대구시 공공데이터 5종과 기상청 관측 자료 4종을 지형, 토지피복 자료와 결합해 밤에 산 사면에서 시가지로 내려오는 찬 공기 흐름을 상대 점수로 계산하고, 기상청 관측소 실측 밤 기온으로 방향성을 확인했습니다.
+        대구시 공공데이터 5종과 기상청 자료 5종(야간 바람 포함)을 지형, 토지피복, 건물 공간정보와 결합해 밤에 산 사면에서 시가지로 내려오는 찬 공기 흐름을 상대 점수로 계산하고, 기상청 실측 기온 및 바람, 패널 회귀와 머신러닝, 의사 지형 및 건물 높이 민감도로 검증했습니다.
       </p>
       <div class="notice-bar">
         <strong>해석 안내:</strong> 이 페이지의 모든 지표(생성 간이 지표 C_gen, 흐름 간이 지표 C_flow, 시민 체감 등급 1~5등급, 길목 막힘 위험 지수 R_block)는 지형과 토지피복으로 계산한 무차원 상대 점수 또는 백분위 등급이며, 실제 풍속, 풍량, 기온 저감량을 뜻하지 않습니다. "몇 도 더 시원하다"는 표현은 기상청 관측소 실측 밤 기온을 직접 비교할 때만 사용합니다.
@@ -868,14 +894,14 @@
   <!-- Key Metrics Strip (All exact JSON values) -->
   <section class="kpi-strip" aria-label="핵심 분석 수치">
     <div class="kpi-card">
-      <div class="kpi-label">대구(ASOS 143) 열대야 변화</div>
+      <div class="kpi-label">대구(ASOS 143) 열대야 추세</div>
       <div class="kpi-value">10.4일 → 22.5일</div>
-      <div class="kpi-sub">초기 10년(1973~1982) 대 최근 10년(2017~2026), 2026년 31일</div>
+      <div class="kpi-sub">1973~2026년 Sen +2.73일/10년 (MK p=0.00064), 2026년 31일</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">맑은 날 대 흐린 날 일교차</div>
-      <div class="kpi-value">11.57℃ vs 7.39℃</div>
-      <div class="kpi-sub">2026년 6~9월 맑은 날 26일 대 흐리거나 비 온 날 53일</div>
+      <div class="kpi-label">맑은 밤 대 흐린 밤 냉각 폭</div>
+      <div class="kpi-value">9.41℃ vs 4.63℃</div>
+      <div class="kpi-sub">2026년 6~9월 완결 120밤(7곳 평균), 맑음 25밤 대 흐리거나 비 52밤</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">대구 찬 공기 고생성 구역</div>
@@ -888,18 +914,18 @@
       <div class="kpi-sub">유입 구간 47개 중 상위 15곳, 보행 코스 후보 41곳 중 8개</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">실측 7곳 흐름 지표 대 밤 기온</div>
-      <div class="kpi-value">Spearman -0.929</div>
-      <div class="kpi-sub">500m 버퍼, 열대야 31일 (p=0.0025, 단 시가지 비율과 얽힘)</div>
+      <div class="kpi-label">실측 7곳 및 LOSO AI 검증</div>
+      <div class="kpi-value">RMSE 0.997 → 0.850℃</div>
+      <div class="kpi-sub">단순 상관 -0.929(편상관 p=0.1719 비유의), 패널 AI C_flow 추가 개선</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">행정 검토 막힘 위험 지점</div>
-      <div class="kpi-value">상위 15곳</div>
-      <div class="kpi-sub">상류 흐름 상위 20%, 하류 시가지 0.7 이상 후보 1,224격자 중 선정</div>
+      <div class="kpi-value">기존 15곳 / 건물 15곳</div>
+      <div class="kpi-sub">기존 WorldCover안과 건물 높이 기반안 500m 내 7곳(46.7%) 겹침</div>
     </div>
   </section>
 
-  <!-- Main Workspace: Map + 5-Step Story -->
+  <!-- Main Workspace: Map + 6-Step Story -->
   <main class="main-container">
     <div class="workspace-grid">
 
@@ -940,7 +966,12 @@
             <label class="layer-toggle">
               <input type="checkbox" id="chk-hotspots" onchange="toggleLayer('hotspots', this.checked)" />
               <span class="swatch" style="background: #ffffff; border: 2px solid #7f0000;"></span>
-              <span>막힘 위험 지점(15곳)</span>
+              <span>막힘 위험 기존안(15곳)</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-bhotspots" onchange="toggleLayer('bhotspots', this.checked)" />
+              <span class="swatch" style="background: #d9480f; border-radius: 50%;"></span>
+              <span>건물 높이 막힘(15곳)</span>
             </label>
             <label class="layer-toggle">
               <input type="checkbox" id="chk-stations" checked onchange="toggleLayer('stations', this.checked)" />
@@ -998,14 +1029,15 @@
         <div class="explorer-tabs" role="tablist">
           <button type="button" class="explorer-tab active" id="tab-courses" onclick="switchExplorerTab('courses')">추천 코스 (8개)</button>
           <button type="button" class="explorer-tab" id="tab-corridors" onclick="switchExplorerTab('corridors')">유입 길목 (15곳)</button>
-          <button type="button" class="explorer-tab" id="tab-hotspots" onclick="switchExplorerTab('hotspots')">막힘 위험 지점 (15곳)</button>
+          <button type="button" class="explorer-tab" id="tab-hotspots" onclick="switchExplorerTab('hotspots')">막힘 기존안 (15곳)</button>
+          <button type="button" class="explorer-tab" id="tab-bhotspots" onclick="switchExplorerTab('bhotspots')">건물 높이 막힘 (15곳)</button>
           <button type="button" class="explorer-tab" id="tab-stations" onclick="switchExplorerTab('stations')">기상청 관측소 (14곳)</button>
           <button type="button" class="explorer-tab" id="tab-districts" onclick="switchExplorerTab('districts')">구군별 요약 (8곳)</button>
         </div>
         <div class="explorer-list" id="explorer-list"></div>
       </div>
 
-      <!-- Right: 5-Step Story Flow (with 1 existing graph image per step) -->
+      <!-- Right: 6-Step Story Flow -->
       <div class="story-column">
 
         <!-- Step 1 -->
@@ -1018,18 +1050,24 @@
           </div>
           <div class="story-body">
             <p>
-              대구는 팔공산, 비슬산, 앞산으로 둘러싸인 분지 지형이라 낮 동안 쌓인 열기가 밤에도 쉽게 빠져나가지 않습니다. 기상청 대구(ASOS 143) 관측소의 1973~2026년(54년) 기록을 분석한 결과, 연간 열대야 일수는 초기 10년(1973~1982) 평균 <strong>10.4일</strong>에서 최근 10년(2017~2026) 평균 <strong>22.5일</strong>로 늘었으며, 10년마다 <strong>2.85일</strong>씩 증가하는 추세(p=0.000391)가 나타났습니다.
+              대구는 팔공산, 비슬산, 앞산으로 둘러싸인 분지 지형이라 낮 동안 쌓인 열기가 밤에도 쉽게 빠져나가지 않습니다. 기상청 대구(ASOS 143) 관측소의 1973~2026년(54년) 기록에서 연간 열대야 일수는 초기 10년(1973~1982) 평균 <strong>10.4일</strong>에서 최근 10년(2017~2026) 평균 <strong>22.5일</strong>로 두 배 이상 늘었습니다. 단순 선형 추세는 10년당 <strong>+2.85일</strong>(p=0.000391)이고, 가산 시계열에 맞춘 비모수 <strong>Sen 기울기</strong>는 10년당 <strong>+2.73일</strong>(95% 신뢰구간 1.25~4.58일), <strong>Mann-Kendall 검정</strong>은 <strong>tau=0.320</strong>(z=3.414, <strong>p=0.00064</strong>)로 장기 증가 추세가 일관되게 확인됩니다(단, 연도 간 자기상관을 보정하지 않은 기본 추정입니다).
             </p>
             <p>
-              특히 2026년 여름에는 열대야가 총 <strong>31일</strong> 발생했습니다. 열대야일 목록 기준 밤 최저기온 평균은 <strong>26.35℃</strong>(최고 <strong>28.8℃</strong>)였고, 시간별 자료에서 21시~다음 날 06시 최저기온으로 다시 집계한 31일 평균은 <strong>26.45℃</strong>였습니다(집계 시간대 정의 차이에 따른 수치).
+              2026년 여름 열대야는 총 <strong>31일</strong>이었습니다. 기상청 열대야 목록 기준 밤 최저기온 평균은 <strong>26.35℃</strong>(최고 <strong>28.8℃</strong>)이고, 21시~다음 날 06시 정시 자료 기준 평균은 <strong>26.45℃</strong>, 일별 달력일(00~24시) 최저 평균은 <strong>26.00℃</strong>(목록과 3일만 일치)이므로 목적에 따라 시간 기준을 구분해 사용합니다.
             </p>
             <div class="story-highlight">
-              <strong>맑은 밤의 복사냉각 조건:</strong> 2026년 6~9월(122일) 가운데 맑고 강수 기록이 없는 날(운량 3.0 이하, <strong>26일</strong>)의 평균 일교차는 <strong>11.57℃</strong>(중앙값 11.5℃)로, 흐리거나 비가 온 날(강수 기록 있거나 운량 7.0 이상, <strong>53일</strong>)의 평균 일교차 <strong>7.39℃</strong>(중앙값 7.4℃)보다 뚜렷하게 컸습니다(Mann-Whitney U 검정 p=0.0).
+              <strong>일교차 대신 실제 야간 냉각 폭(18시~밤 최저)으로 검증:</strong> 1차 분석에서 참고한 일교차(맑은 날 11.57℃ 대 흐리거나 비 온 날 7.39℃)에는 낮 동안 햇볕으로 최고기온이 오르는 영향이 크게 섞입니다. 06 보강 실험에서 주간 가열을 제외한 야간 냉각 폭으로 2026년 6~9월 완결 <strong>120밤</strong>(관측소 7곳 평균)을 다시 집계한 결과, <strong>맑은 밤(25밤) 평균 9.41℃</strong>(중앙값 9.36℃), 중간 밤(43밤) <strong>7.74℃</strong>, <strong>흐리거나 비 온 밤(52밤) 4.63℃</strong>(중앙값 4.46℃)로 맑은 밤의 냉각 폭이 두 배를 넘었습니다. 같은 기간 C_flow 최상위 하빈과 최하위 신암의 밤 최저기온 차이도 맑은 밤 평균 <strong>-3.44℃</strong>에서 흐리거나 비 온 밤 <strong>-1.38℃</strong>로 절반 이하로 줄었습니다.
             </div>
             <figure class="story-figure">
-              <img src="assets/chart_01_tropical_nights_trend_1973_2026.png" alt="대구 ASOS 143 연간 열대야 일수 추세와 2026년 밤 최저기온 및 하늘 상태별 일교차" onclick="openLightbox(this.src, this.alt)" />
+              <img src="assets/exp_e2_sky_cooling.png" alt="하늘 상태별 7개 관측소 평균 야간 냉각 폭 및 하빈 대 신암 밤 최저기온 차이" onclick="openLightbox(this.src, this.alt)" />
               <figcaption class="story-figcaption">
-                [단계 1 그래프] 대구(ASOS 143) 1973~2026년 열대야 추세, 2026년 열대야 31일 밤 최저기온, 6~9월 하늘 상태별 일교차 비교 (클릭하면 크게 봅니다)
+                [단계 1 그래프 A] 하늘 상태별 야간 냉각 폭(18시 기온 빼기 밤 21~06시 최저기온)과 C_flow 최상위(하빈) 대 최하위(신암) 밤 최저기온 차 (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+            <figure class="story-figure">
+              <img src="assets/exp_e2_tropical_trend.png" alt="대구 ASOS 143 1973~2026년 열대야 일수 추세 및 Sen 기울기와 Mann-Kendall 결과" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 1 그래프 B] 대구(ASOS 143) 1973~2026년 연간 열대야 일수 추세: 선형(+2.85일/10년) 및 비모수 Sen 기울기(+2.73일/10년, Mann-Kendall p=0.00064) (클릭하면 크게 봅니다)
               </figcaption>
             </figure>
           </div>
@@ -1057,7 +1095,7 @@
             <figure class="story-figure">
               <img src="assets/map_01_cool_air_generation.png" alt="대구 야간 찬 공기 생성 간이 지표 C_gen 분포 지도" onclick="openLightbox(this.src, this.alt)" />
               <figcaption class="story-figcaption">
-                [단계 2 지도] 대구 야간 찬 공기 생성 간이 지표(C_gen) 분포. 물리적 냉기 생성량이 아닌 지형과 피복 가중 상대 지수 (클릭하면 크게 봅니다)
+                [단계 2 지도] 대구 야간 찬 공기 생성 간이 지표(C_gen) 분포. 물리적 생성량이 아닌 지형과 피복 가중 상대 지수 (클릭하면 크게 봅니다)
               </figcaption>
             </figure>
           </div>
@@ -1105,12 +1143,12 @@
               대구 주변 기상청 관측소 <strong>14곳</strong>(격자 안 <strong>12곳</strong>) 가운데 2026년 여름 시간별 기온 자료가 확보된 <strong>7곳</strong>(하빈, 달성, 대구북구, 옥포, 대구, 대구서구, 신암)에서 열대야 <strong>31일</strong>의 야간(21시~다음 날 06시) 실측 기온과 반경 500m 평균 지표를 비교했습니다.
             </p>
             <p>
-              관측소 실측 비교에서 흐름 지표가 가장 높은 <strong>하빈(C_flow 19.746)</strong>의 열대야 밤 최저기온 평균은 <strong>24.6℃</strong>로 대구(ASOS 143, C_flow 10.924, 밤 최저 <strong>26.45℃</strong>)보다 실측 기준 <strong>1.85℃ 더 시원했고</strong>, 옥포(25.57℃)는 <strong>0.88℃</strong>, 달성(25.53℃)은 <strong>0.92℃</strong>, 대구북구(25.97℃)는 <strong>0.48℃</strong> 더 낮았습니다. 반대로 도심 한가운데에 있어 흐름 지표가 가장 낮은 <strong>신암(C_flow 1.47)</strong>은 <strong>27.22℃</strong>로 대구 관측소보다 <strong>0.76℃</strong> 더 높았습니다. 7곳에서 500m 버퍼 C_flow와 열대야 밤 최저기온의 순위 상관은 <strong>Spearman ρ = -0.929</strong>(p=0.0025, Pearson r = -0.909), 야간 냉각 폭(18시 기온 빼기 밤 최저기온)과는 <strong>Spearman ρ = +0.893</strong>(p=0.0068)로 가설과 같은 방향이었습니다.
+              관측소 실측 비교에서 흐름 지표가 가장 높은 <strong>하빈(C_flow 19.746)</strong>의 열대야 밤 최저기온 평균은 <strong>24.60℃</strong>로 대구(ASOS 143, C_flow 10.924, 밤 최저 <strong>26.45℃</strong>)보다 실측 기준 <strong>1.85℃</strong> 낮았고, 옥포(25.57℃)는 <strong>0.88℃</strong>, 달성(25.53℃)은 <strong>0.92℃</strong>, 대구북구(25.97℃)는 <strong>0.48℃</strong> 더 낮았습니다. 반대로 도심 한가운데에 있어 흐름 지표가 가장 낮은 <strong>신암(C_flow 1.470)</strong>은 <strong>27.22℃</strong>로 대구 관측소보다 <strong>0.76℃</strong> 더 높았습니다. 7곳에서 500m 버퍼 C_flow와 열대야 밤 최저기온의 순위 상관은 <strong>Spearman ρ = -0.929</strong>(p=0.0025), 야간 냉각 폭과는 <strong>+0.893</strong>이었습니다.
             </p>
             <div class="story-caution">
-              <strong>검증의 핵심 한계 (표본 수 n=7 및 시가지 비율과의 얽힘):</strong>
-              1) 시간별 기온이 있는 관측소가 <strong>7곳</strong>뿐이라 통계적 확정 검정이 아닌 방향성 확인 수준입니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳은 시간자료 없음).<br />
-              2) 같은 7곳에서 반경 500m C_flow와 시가지 비율의 순위 상관이 <strong>-0.75</strong>이고, 시가지 비율과 열대야 밤 최저기온의 순위 상관도 <strong>0.821</strong>(p=0.0234, 맑은 날 <strong>0.893</strong>)입니다. 따라서 이 자료만으로는 산과 하천에 가까운 관측소의 밤 기온이 낮은 현상을 찬 공기 유입만의 순수 효과로 분리할 수 없으며, 도시열섬(시가지 밀도) 효과와 함께 움직인 결과로 읽어야 합니다.
+              <strong>검증의 핵심 한계 (표본 수 n=7 및 시가지 편상관 비유의):</strong>
+              1) 시간별 기온이 있는 관측소가 <strong>7곳</strong>뿐이라 방향성 확인 수준입니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳은 시간자료 없음).<br />
+              2) 7곳에서 500m C_flow와 시가지 비율의 순위 상관이 <strong>-0.75</strong>이고, 06 보강 실험에서 관측소별 [맑은 밤 냉각 폭 - 흐린 밤 냉각 폭] 차이(하빈 6.30℃ 대 신암 3.60℃)와 C_flow의 단순 순위 상관은 <strong>0.857</strong>(p=0.0137)이었으나, <strong>시가지 비율을 통제한 편순위상관은 0.639(근사 p=0.1719)로 통계적으로 유의하지 않았습니다.</strong> 따라서 7곳 요약만으로는 C_flow와 시가지 비율 효과를 분리할 수 없습니다.
             </div>
             <figure class="story-figure">
               <img src="assets/chart_03_station_validation_scatter.png" alt="기상청 관측소 7곳 C_flow 대 열대야 야간 최저기온, 고도보정 기온, 야간 냉각 폭 산점도" onclick="openLightbox(this.src, this.alt)" />
@@ -1121,11 +1159,51 @@
           </div>
         </article>
 
-        <!-- Step 5 -->
+        <!-- Step 5 (New AI Verification Step) -->
         <article class="story-card" id="step-5">
           <div class="story-step-header">
             <div class="step-badge">
               <span class="step-num">5</span>
+              <h3 class="story-title">AI 모델로 다시 확인했다</h3>
+            </div>
+            <button type="button" class="btn-map-sync" onclick="applyPreset('station')">지도에서 관측소 보기</button>
+          </div>
+          <div class="story-body">
+            <p>
+              7개 관측소의 2026년 6~9월 완결 120밤을 합친 <strong>832개 관측소-밤 패널</strong>(21~06시 10개 정시 모두 충족)에서 시가지 비율과 다른 공간, 기상 변수를 통제한 뒤에도 C_flow가 추가 설명력을 갖는지 검증했습니다. 날짜 고정효과 회귀(조건수 27.28)에서 C_flow 10점당 밤 최저기온 계수는 <strong>-1.20℃</strong>(군집 와일드 95% 신뢰구간 -1.89~-0.50℃), 맑은 밤 교차항은 <strong>-0.45℃</strong>(맑은 밤 기울기 -1.65℃)였습니다.
+            </p>
+            <p>
+              이어서 시험 관측소의 기온 정보를 완전히 빼고 학습 관측소 6곳 평균으로만 중심화하는 <strong>관측소 하나 빼기(LOSO) 교차검증</strong>을 수행했습니다. 보수적으로 과적합을 제한한 트리 모형(공간변수 C_gen, 시가지 비율, 녹지 비율, 해발고도, 하천거리 + 날씨변수 운량, 강수, 낮 최고기온 포함)에 C_flow를 추가하자 두 모형 모두 새 관측소 예측 오차가 줄었습니다.
+            </p>
+            <div class="story-highlight">
+              <strong>LOSO 검증 오차 감소 및 독립 재현 결과:</strong><br />
+              1) <strong>랜덤포레스트</strong>(max_depth=5, min_samples_leaf=15, n_estimators=300): RMSE <strong>0.997℃ → 0.850℃</strong> (<strong>0.147℃</strong> 감소, 관측소 재표집 95% 구간 0.019~0.305℃), MAE <strong>0.773℃ → 0.645℃</strong> (0.128℃ 감소).<br />
+              2) <strong>그래디언트부스팅</strong>(max_depth=2, min_samples_leaf=15, n_estimators=150): RMSE <strong>0.918℃ → 0.825℃</strong> (<strong>0.094℃</strong> 감소, 95% 구간 0.006~0.220℃), MAE <strong>0.709℃ → 0.616℃</strong> (0.093℃ 감소).<br />
+              3) <strong>다른 AI 모델의 독립 재현</strong>(<code>pipeline/coolwind/06_a4_report.md</code>): 실험 코드를 보지 않고 원자료와 정의만으로 독립 계산한 기본 랜덤포레스트(112밤 784행, n_estimators=500, 규제 없음)에서도 C_flow 제외 RMSE <strong>1.166℃</strong>에서 포함 <strong>0.948℃</strong>로 <strong>0.218℃</strong> 줄어(학습 목표 6곳 재중심화 시 1.075℃ → 0.827℃, 0.248℃ 감소) 같은 방향이 확인되었습니다.
+            </div>
+            <div class="story-caution">
+              <strong>AI 검증 해석 주의:</strong> 832개 관측소-밤 패널이라도 공간 위치의 실질 표본은 <strong>관측소 7곳</strong>입니다. TreeSHAP(아래 오른쪽 그림)에서 C_gen과 C_flow, 녹지 비율, 시가지 비율, 운량이 상위 변수로 나타나고 C_flow 양수 기여가 맑은 밤(n=175)에 더 넓게 퍼졌지만, SHAP은 예측 모형의 기여 분해일 뿐 인과효과나 물리적 공기 이동량이 아닙니다. 또한 같은 날짜의 다른 관측소로 학습하므로 새 장소 일반화 검증이며 미래 날짜 검증은 아닙니다.
+            </div>
+            <figure class="story-figure">
+              <img src="assets/exp_e1_loso.png" alt="관측소 하나 빼기(LOSO) 검증에서 C_flow 제외 대 포함 RMSE 비교" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 5 그래프 A] 시가지 비율과 다른 공간, 기상 변수를 통제한 보수적 설정 LOSO 검증에서 C_flow 추가 전후 RMSE 비교 (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+            <figure class="story-figure">
+              <img src="assets/exp_e1_shap.png" alt="LOSO 검증 관측소 TreeSHAP 변수 중요도 및 하늘 상태별 C_flow 기여 분포" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 5 그래프 B] LOSO 검증 관측소의 TreeSHAP 평균 절대 기여도(좌)와 하늘 상태별 C_flow 기여 분포(우) (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <!-- Step 6 -->
+        <article class="story-card" id="step-6">
+          <div class="story-step-header">
+            <div class="step-badge">
+              <span class="step-num">6</span>
               <h3 class="story-title">이렇게 쓸 수 있다 (시민 코스, 행정 검토)</h3>
             </div>
             <button type="button" class="btn-map-sync" onclick="applyPreset('citizen')">시민 코스 보기</button>
@@ -1138,12 +1216,12 @@
               <strong>1) 시민용 체감 찬바람길 등급(1~5등급)과 추천 코스 8곳:</strong> 보행 영역(반경 300m 시가지 비율 0.3 이상, 유효 <strong>266,611격자</strong>)에서 구군 간 공정 비교를 위해 대구 전역 공통식(<code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>)의 백분위로 1등급(상위 10%)부터 5등급(하위 25%, 열기 정체 주의 구간)을 매겼습니다. 1~2등급 수변과 공원이 이어진 후보 <strong>41곳</strong> 중 하천별 대표성을 고려해 <strong>신천 수변 코스(CRS_01, 15.65km)</strong>, <strong>금호강 수변 코스(CRS_02, 11.08km)</strong>, <strong>팔거천 수변 코스(CRS_03, 10.38km, 공원 12곳 연결)</strong> 등 <strong>8개 추천 코스</strong>를 선정했습니다.
             </p>
             <p>
-              <strong>2) 행정용 길목 막힘 위험 지수(R_block, 0~100)와 중점 검토 지점 15곳:</strong> 반경 300m 상류 C_flow가 대구 상위 20%(<strong>25.682점</strong> 이상)이면서 하류 시가지 비율이 <strong>0.7</strong> 이상인 후보 <strong>1,224격자</strong>에 대해 녹지 단절도를 반영한 막힘 위험 지수를 계산하고, 500m 간격 조건으로 <strong>상위 15곳(BLK_01~BLK_15)</strong>을 추렸습니다. 각 지점은 여건에 따라 <em>녹지 단절 구간 녹지 확충 검토</em>(BLK_01 달성군 100.0점, BLK_02 남구 91.1점 등), <em>개발 밀도 관리 검토</em>(BLK_06 달성군 신천 인근 69.7점, BLK_09 달서구 64.34점 등), <em>수변 녹지 연결 검토</em>(BLK_12 달성군 천내천 63.26점, BLK_13 수성구 신천 59.76점)의 사전 참고 지도로 활용할 수 있습니다.
+              <strong>2) 행정용 길목 막힘 위험 지수(R_block, 0~100)와 건물 높이 비교:</strong> 상류 300m C_flow가 대구 상위 20%(<strong>25.682점</strong> 이상)이면서 하류 시가지 비율이 <strong>0.7</strong> 이상인 후보 <strong>1,224격자</strong>에서 WorldCover 기반 막힘 지수 상위 15곳(BLK_01~BLK_15)을 추렸습니다. 다만 아래 보강 검증에서 국토교통부 건물 높이 자료를 반영한 15곳과 반경 500m 내 <strong>7곳(46.7%)</strong>만 겹쳤으므로, WorldCover 기반 지도는 녹지 연결과 수변 보식 탐색용 1차 스크리닝으로만 쓰고 건축 밀도 심의에는 건물 높이를 직접 반영해야 합니다.
             </p>
             <figure class="story-figure">
               <img src="assets/map_04_citizen_coolwind_walk_grades.png" alt="시민용 열대야 저녁 체감 찬바람길 등급과 추천 코스 8곳 지도" onclick="openLightbox(this.src, this.alt)" />
               <figcaption class="story-figcaption">
-                [단계 5 지도] 시민 체감 찬바람길 등급(1~5등급)과 추천 야간 산책 코스 8곳. 등급은 백분위 순위이며 실측 기온 차이가 아님 (클릭하면 크게 봅니다)
+                [단계 6 지도] 시민 체감 찬바람길 등급(1~5등급)과 추천 야간 산책 코스 8곳. 등급은 백분위 순위이며 실측 기온 차이가 아님 (클릭하면 크게 봅니다)
               </figcaption>
             </figure>
           </div>
@@ -1152,11 +1230,84 @@
       </div>
     </div>
 
+    <!-- 06 Experiment Comparison Section: Admin Building Height vs Baseline & Station Wind Results -->
+    <section class="section-card" id="section-exp06" aria-label="보강 검증 상세: 건물 높이 막힘 비교와 관측소 바람 결과">
+      <div class="toolbar-title-row" style="margin-bottom: 12px;">
+        <div>
+          <h2 class="section-title">보강 검증 상세: 행정 막힘 지점 비교(기존안 대 건물 높이)와 관측소 야간 바람</h2>
+          <p class="section-desc" style="margin-bottom: 0;">
+            국토교통부 GIS건물통합정보(사용 형상 330,106동, 높이 미상 158,768동 제외) 기반 막힘 지점 15곳과 기상청 AWS 6곳(7,167시간) 야간 바람 대조 결과입니다. 표의 지점을 누르면 위 지도에서 해당 위치로 이동합니다.
+          </p>
+        </div>
+        <button type="button" class="btn-map-sync" onclick="applyPreset('admin')">지도에서 두 막힘 레이어 함께 보기</button>
+      </div>
+
+      <div class="fig-pair">
+        <figure class="story-figure" style="margin-top: 0;">
+          <img src="assets/exp_b_building_overlap.png" alt="기존 WorldCover 기반 막힘 위험 상위 15곳과 건물 높이 및 건폐율 기반 상위 15곳 공간 겹침" onclick="openLightbox(this.src, this.alt)" />
+          <figcaption class="story-figcaption">
+            <strong>[건물 높이 막힘 비교]</strong> 빈 원(기존 WorldCover 상위 15곳) 대 주황색 점(건물 높이 기반 상위 15곳). 반경 30m 3곳(20.0%), 100m 5곳(33.3%), 300m 6곳(40.0%), 500m 및 1,000m 7곳(46.7%) 겹침 (클릭하면 크게 봅니다)
+          </figcaption>
+        </figure>
+        <figure class="story-figure" style="margin-top: 0;">
+          <img src="assets/exp_w_wind.png" alt="맑은 열대야 밤 21~06시 AWS 6곳 바람장미와 지형 우세 상류 방향 비교" onclick="openLightbox(this.src, this.alt)" />
+          <figcaption class="story-figcaption">
+            <strong>[야간 바람장미 대조]</strong> 맑은 열대야(각 120시간) AWS 6곳의 바람장미와 지형 우세 상류 방향(빨간 선). 여름 전체 맑은 밤 대 흐린 밤에서 달성 한 곳만 맑은 밤 상류 정렬이 높고 절반을 넘었습니다 (클릭하면 크게 봅니다)
+          </figcaption>
+        </figure>
+      </div>
+
+      <div class="two-col-grid" style="margin-top: 18px;">
+        <div>
+          <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text);">1) 건물 높이 기반 막힘 지점 상위 15곳 (06:B, 클릭 시 지도 이동)</h3>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;">
+            필드 <code>A16</code>을 높이(m)로 매핑한 통상 스키마 가정 결과입니다(층수 <code>A26</code>와 순위 상관 0.891, 층당 중앙값 3.82m, 공식 명세 미확인). 하류 높이 유효 격자 80% 이상 후보 10,994격자 중 선정했습니다.
+          </p>
+          <div class="table-wrap">
+            <table class="data-table" style="min-width: 520px;">
+              <thead>
+                <tr>
+                  <th>순위</th>
+                  <th>구군</th>
+                  <th>위험지수</th>
+                  <th>상류 C_flow</th>
+                  <th>하류 유효비율</th>
+                  <th>최근접 기존지점 (거리)</th>
+                </tr>
+              </thead>
+              <tbody id="bhotspot-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size: 16px; margin: 0 0 8px 0; color: var(--text);">2) 관측소별 야간 바람 및 상류 45도 이내 정렬 (06:W, 클릭 시 지도 이동)</h3>
+          <p style="font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px 0;">
+            무풍 기준은 풍속 0.5m/s 미만이며, 대구 ASOS 143은 시간별 바람 자료가 없어 결측(자료 없음)으로 두었습니다. 대구북구와 신암은 관측소 격자에서 90m 이상 이어진 우세 상류 경로가 잡히지 않았습니다.
+          </p>
+          <div class="table-wrap">
+            <table class="data-table" style="min-width: 520px;">
+              <thead>
+                <tr>
+                  <th>관측소</th>
+                  <th>열대야 무풍 / 평균풍속</th>
+                  <th>열대야 주풍향 (상류방향)</th>
+                  <th>열대야 45도 정렬</th>
+                  <th>여름 맑음 대 흐림 45도 정렬</th>
+                </tr>
+              </thead>
+              <tbody id="wind-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Additional Static Figures Gallery (Maps 02, 03, 05 & Chart 04) -->
-    <section class="section-card" aria-label="분석 지도 및 민감도 실험 그래프 모음">
-      <h2 class="section-title">부록 시각화: 흐름 길목 지도, 녹지 징검다리, 행정 막힘 위험 지도, 민감도 실험</h2>
+    <section class="section-card" aria-label="분석 지도 및 기본 민감도 그래프 모음">
+      <h2 class="section-title">부록 시각화: 흐름 길목 지도, 녹지 징검다리, 행정 막힘 위험 지도, 가중치 민감도</h2>
       <p class="section-desc">
-        위 5단계 이야기 흐름에 포함된 그래프 외에 분석에서 생성한 나머지 지도 3종과 가중치 민감도 실험 그래프(실험 A, B, C)입니다. 이미지를 누르면 원본 해상도(300 DPI)로 확대됩니다.
+        위 이야기 흐름과 보강 비교에 포함된 그림 외에 1차 공간 분석에서 생성한 지도 3종과 가중치 민감도 그래프(실험 A, B, C)입니다. 이미지를 누르면 크게 확대됩니다.
       </p>
       <div class="gallery-grid">
         <div class="gallery-item">
@@ -1169,7 +1320,7 @@
         </div>
         <div class="gallery-item">
           <img src="assets/map_05_admin_blockage_risk_hotspots.png" alt="행정용 찬 공기 유입 길목 막힘 위험 지수와 녹지 단절 검토 지점 15곳" onclick="openLightbox(this.src, this.alt)" />
-          <div class="gallery-caption"><strong>[지도 5]</strong> 행정용 길목 막힘 위험 지수(R_block)와 중점 검토 지점 상위 15곳</div>
+          <div class="gallery-caption"><strong>[지도 5]</strong> 행정용 길목 막힘 위험 지수(R_block)와 WorldCover 기반 검토 지점 15곳</div>
         </div>
         <div class="gallery-item">
           <img src="assets/chart_04_sensitivity_robustness.png" alt="토지피복 가중치, 시가지 감쇠 계수, 관측소 버퍼 반경 민감도 실험 그래프" onclick="openLightbox(this.src, this.alt)" />
@@ -1182,7 +1333,7 @@
     <section class="section-card" id="section-data">
       <h2 class="section-title">데이터 출처와 라이선스</h2>
       <p class="section-desc">
-        대구광역시 공공데이터 5종과 기상청 공공데이터 4종을 핵심 자료로 사용하고, 지형(Copernicus DEM), 토지피복(ESA WorldCover), 하천 및 행정경계(OpenStreetMap)를 보조 공간자료로 결합했습니다. 모든 수치는 <code>02_analysis_results.json</code> 및 <code>table_01_dataset_summary.csv</code>와 동일합니다.
+        대구광역시 공공데이터 5종과 기상청 공공데이터 5종(보강 야간 바람 25,774행 포함)을 핵심 자료로 사용하고, 지형(Copernicus DEM), 토지피복(ESA WorldCover), 하천 및 행정경계(OpenStreetMap), 국토교통부 GIS건물통합정보(보강 382,695동)를 보조 공간자료로 결합했습니다. 수치는 <code>02_analysis_results.json</code> 및 <code>06_experiments.json</code>과 동일합니다.
       </p>
       <div class="table-wrap">
         <table class="data-table">
@@ -1207,7 +1358,7 @@
       <section class="section-card" id="section-method">
         <h2 class="section-title">분석 방법 및 민감도 확인 요약</h2>
         <p class="section-desc">
-          정밀 전산유체 모형 대신 공개 데이터만으로 언제든 재현할 수 있는 30m 격자 상시 갱신형 경량 스크리닝 지표를 설계했습니다.
+          정밀 전산유체 모형 대신 공개 데이터만으로 언제든 재현할 수 있는 30m 격자 상시 갱신형 경량 스크리닝 지표를 설계하고, 06 보강 실험으로 민감도를 점검했습니다.
         </p>
 
         <div class="method-box">
@@ -1227,46 +1378,60 @@
         <div class="method-box">
           <h4>3. 시민 체감 등급 (1~5등급)과 행정 막힘 위험 지수 (R_block, 0~100)</h4>
           <p>
-            보행 영역(반경 300m 시가지 0.3 이상, 수면 0.5 미만)에서 달서구와 달성군의 가로수 자료 부재를 고려해 대구 전역 공통식 <code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>의 백분위(상위 10%, 25%, 50%, 75%)로 1~5등급을 부여했습니다. 막힘 위험 지수는 반경 300m 상류 평균 C_flow와 하류 시가지 비율, 하류 녹지 단절도 <code>(1 - G_down)</code>의 곱을 대구 안에서 0~100으로 정규화했습니다.
+            보행 영역(반경 300m 시가지 0.3 이상, 수면 0.5 미만)에서 달서구와 달성군의 가로수 자료 부재를 고려해 대구 전역 공통식 <code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>의 백분위(상위 10%, 25%, 50%, 75%)로 1~5등급을 부여했습니다. 기본 막힘 위험 지수는 반경 300m 상류 평균 C_flow와 하류 시가지 비율, 하류 녹지 단절도 <code>(1 - G_down)</code>의 곱을 정규화했으며, 건물 실험안은 하류 건폐율 × 평균 높이의 정규화 값을 곱해 비교했습니다.
           </p>
         </div>
 
         <div class="method-box">
-          <h4>4. 가중치 민감도 실험 (실험 A, B, C)</h4>
+          <h4>4. 가중치 민감도 실험 (1차 실험 A, B, C)</h4>
           <ul>
-            <li><strong>실험 A-1 (숲 집중안: 초지 0.6, 농지 0.3):</strong> 상위 10% Jaccard <strong>0.9553</strong>, 격자 순위 상관 <strong>0.9932</strong>, 상위 10개 길목 중 <strong>9개</strong> 유지 (상위 15개 길목 순위 상관 0.968).</li>
-            <li><strong>실험 A-2 (균등 녹지안: 초지 0.9, 농지 0.85):</strong> 상위 10% Jaccard <strong>0.986</strong>, 격자 순위 상관 <strong>0.9995</strong>, 상위 10개 길목 중 <strong>10개</strong> 모두 유지 (순위 상관 1.000).</li>
-            <li><strong>실험 B-1, B-2 (시가지 유지 계수 0.90 약한 감쇠 / 0.65 강한 감쇠):</strong> 상위 10% Jaccard 각각 <strong>0.9307</strong>, <strong>0.9393</strong>, 격자 순위 상관 모두 <strong>0.9925</strong>, 상위 10개 길목 중 <strong>7개</strong> 유지.</li>
-            <li><strong>실험 C (관측소 버퍼 반경 300m / 1,000m):</strong> 500m 기준 C_flow와의 순위 상관 각각 <strong>0.8112</strong>, <strong>0.8601</strong>(n=12). 고도 보정 야간 기온과의 순위 상관은 열대야일 기준 300m <strong>-0.964</strong>, 500m <strong>-0.929</strong>, 1,000m <strong>-0.857</strong>로 모두 음(-)의 방향 유지.</li>
+            <li><strong>실험 A-1 (숲 집중안: 초지 0.6, 농지 0.3):</strong> 상위 10% Jaccard <strong>0.9553</strong>, 격자 순위 상관 <strong>0.9932</strong>, 상위 10개 길목 중 <strong>9개</strong> 유지.</li>
+            <li><strong>실험 A-2 (균등 녹지안: 초지 0.9, 농지 0.85):</strong> 상위 10% Jaccard <strong>0.986</strong>, 격자 순위 상관 <strong>0.9995</strong>, 상위 10개 길목 중 <strong>10개</strong> 유지.</li>
+            <li><strong>실험 B-1, B-2 (시가지 유지 계수 0.90 / 0.65):</strong> 상위 10% Jaccard <strong>0.9307</strong>, <strong>0.9393</strong>, 격자 순위 상관 <strong>0.9925</strong>, 상위 10개 길목 중 <strong>7개</strong> 유지.</li>
+            <li><strong>실험 C (버퍼 300m / 1,000m):</strong> 500m 기준과 순위 상관 <strong>0.8112</strong>, <strong>0.8601</strong>(n=12). 열대야 밤 기온 상관은 300m <strong>-0.964</strong>, 500m <strong>-0.929</strong>, 1,000m <strong>-0.857</strong>.</li>
           </ul>
+        </div>
+
+        <div class="method-box">
+          <h4>5. 의사 지형과 등급식 민감도 실험 (06 보강 E3)</h4>
+          <ul>
+            <li><strong>시가지 의사 지형(150m / 330m / 630m 창):</strong> 시가지 격자(173,627 / 258,739 / 310,215개) 고도를 주변 비시가지 최솟값으로 하향 보정(중앙값 2.06m / 4.58m / 7.79m)해 재계산하면, <strong>추천 코스 8곳은 8 / 8 / 7곳이 유지</strong>되고 기존 경로의 1~2등급 유지도 8곳 전부 통과했습니다. 반면 <strong>유입 길목 상위 15곳은 4곳(26.7%) / 5곳(33.3%) / 2곳(13.3%)만 유지</strong>되어 좁은 길목 순위는 DSM 표면 변화에 크게 흔들렸습니다.</li>
+            <li><strong>시민 등급식 구조 변경:</strong> 가중합 비율 변경(<code>0.80:0.20</code> / <code>0.50:0.50</code>)에서는 1~2등급 Jaccard <strong>0.666 / 0.760</strong>, 재선정 코스 <strong>5 / 6곳</strong>이 유지되었으나, C_flow에 접근성을 곱하는 조건부식(<code>a=0.5 / a=1.0</code>)에서는 1~2등급 Jaccard <strong>0.398 / 0.433</strong>, 재선정 코스 <strong>4 / 3곳</strong>으로 낮아져 등급식 가정에 민감했습니다.</li>
+          </ul>
+          <figure class="story-figure" style="margin-top: 10px;">
+            <img src="assets/exp_e3_sensitivity.png" alt="시가지 의사 지형 창폭별 길목과 코스 유지율 및 시민 등급식 변경 민감도" onclick="openLightbox(this.src, this.alt)" />
+            <figcaption class="story-figcaption">
+              [민감도 06:E3] (좌) 시가지 의사 지형 창폭별 길목 상위 15(녹색) 대 추천 코스(빨강) 유지율, (우) 시민 등급식 변경에 따른 1~2등급 일치율과 코스 유지율 (클릭하면 크게 봅니다)
+            </figcaption>
+          </figure>
         </div>
       </section>
 
       <section class="section-card" id="section-limits">
         <h2 class="section-title">분석의 한계와 읽을 때 주의할 점</h2>
         <p class="section-desc">
-          이 페이지의 결과는 물리 시뮬레이션이나 인과 검정이 아니며, 아래 한계를 명시한 상태에서 활용해야 합니다.
+          이 페이지의 결과는 물리 시뮬레이션이나 인과 검정이 아니며, 06 보강 실험에서 확인된 부정적 결과와 제약을 포함해 아래 한계를 명시한 상태에서 활용해야 합니다.
         </p>
         <ol class="limitation-list">
           <li>
-            <strong>관측소 실측 검증의 소표본(n=7)과 시가지 비율 교란:</strong>
-            대구 주변 관측소 14곳 중 2026년 여름 시간별 기온이 확보된 곳은 <strong>7곳</strong>뿐이며(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳은 시간자료 없음, 가산과 하양은 분석 격자 밖), 팔공산(853) 시간자료가 없어 전체 그룹과 팔공산 제외 그룹의 상관이 같습니다. 또한 7곳에서 반경 500m C_flow와 시가지 비율의 순위 상관이 <strong>-0.75</strong>이고, 시가지 비율과 열대야 밤 최저기온의 순위 상관도 <strong>0.821</strong>이므로, 밤 기온 차이가 찬 공기 유입 때문인지 시가지 열섬 차이 때문인지 분리할 수 없습니다.
+            <strong>관측소 실측 표본(n=7)과 시가지 통제 편순위상관 비유의:</strong>
+            패널 행은 832개 관측소-밤이지만 공간 위치의 독립 표본은 <strong>7곳</strong>뿐입니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳 시간자료 없음). 7곳에서 맑은 밤과 흐린 밤의 냉각 폭 차이와 C_flow의 단순 순위 상관은 <strong>0.857</strong>(p=0.0137)이지만, <strong>시가지 비율을 통제한 편순위상관은 0.639(근사 p=0.1719)로 유의하지 않습니다.</strong>
           </li>
           <li>
-            <strong>하천 겹침(농축비 2.214배)은 독립 검증이 아님:</strong>
-            하천과 공원 위치를 감쇠 계수에서 뺀 버전에서도 흐름 상위 10% 격자의 하천 100m 이내 농축비가 <strong>2.214배</strong>로 나타나지만, DEM 기반 흐름 누적은 원래 지형 골짜기로 모이므로 하천과 겹치는 것은 알고리즘 구조상 당연한 결과입니다. 또한 도시공원 농축비는 <strong>0.368배</strong>로 1보다 작아, 공원이 흐름 축 위에 있다는 근거로 쓸 수 없습니다.
+            <strong>야간 바람 상류 정렬은 달성 한 곳만 높음:</strong>
+            AWS 6곳의 야간 바람 대조 결과, 여름 전체 기간에서 <strong>달성 한 곳만 맑은 밤 상류 45도 이내 정렬(56.84%)이 흐린 밤(40.56%)보다 뚜렷이 높고 절반을 넘었습니다.</strong> 옥포(44.16% 대 33.56%)는 절반 미만, 하빈(30.83% 대 33.54%)과 대구서구(17.97% 대 19.50%)는 차이가 없거나 낮았으며, 대구북구와 신암은 90m 이상 상류 경로가 잡히지 않았습니다. 즉, 30m DEM 흐름 경로가 모든 관측 지점의 실제 야간 주풍향과 일치한다고 볼 수 없습니다.
           </li>
           <li>
-            <strong>수치표고모델(Copernicus DEM)의 표면 모델(DSM) 한계:</strong>
-            Copernicus DEM GLO-30은 건물과 수목 높이가 포함된 표면 모델(DSM)이므로, 평탄한 시가지 내부의 미세 흐름 방향은 실제 지형 고도보다 고층 건물 군집이나 가로수 높이에 영향을 받았을 수 있습니다.
+            <strong>DSM 표면 모델 왜곡과 길목 상위 15곳 민감성:</strong>
+            Copernicus DEM은 건물과 수목 높이가 섞인 표면 모델(DSM)입니다. 의사 지형 실험에서 추천 코스 8곳은 7~8곳이 유지되었으나 <strong>좁은 유입 길목 상위 15곳은 2~5곳만 유지</strong>되어 수문 흐름 누적 방식(MFD)이 미세 지형 변화에 민감함이 확인되었습니다. 또한 최솟값 필터는 진정한 건물 제거 DEM이 아니며 비시가지 수목 DSM 왜곡은 남습니다.
           </li>
           <li>
-            <strong>건물 높이 자료 및 일부 구군 가로수 원자료 미확보:</strong>
-            국토교통부 GIS건물통합정보가 이 단계에 포함되지 않아 길목 막힘 위험 지수(R_block)는 건물 높이와 건폐율 대신 WorldCover 시가지 비율과 녹지 단절도 대체안으로 계산했습니다. 또한 대구시 가로수 정보(2022)에 <strong>달서구와 달성군</strong> 자료가 없어 두 구군은 0그루가 아닌 <em>자료 없음(null)</em>으로 처리했고, 시민 체감 등급은 가로수를 제외한 대구 전역 공통식으로 산출했습니다.
+            <strong>건물 높이 기반 막힘 지점은 기존과 일부만 겹침 및 필드 가정:</strong>
+            브이월드 건물 정보의 <code>A16</code> 높이 매핑은 공식 명세 확인 없이 통상 스키마를 적용한 가정이며(158,768동 높이 미상으로 제외), 건물 높이 기반 막힘 15곳은 기존 WorldCover 기반 15곳과 <strong>500m 내 7곳(46.7%)만 겹쳤습니다.</strong> 따라서 기존 막힘 지도는 녹지 단절 1차 탐색용으로만 쓰고 건축 밀도 심의에는 3차원 건물 높이를 직접 써야 합니다.
           </li>
           <li>
-            <strong>가중치 가정과 행정구역 범위:</strong>
-            생성 지표와 흐름 유지 계수의 가중치는 문헌에서 확립된 물리 상수가 아니라 연구계획서 기본안 가정입니다. 민감도 실험 A, B는 가중치 변화에 대한 안정성을 보일 뿐 동일한 DEM 흐름 구조를 공유합니다. 군위군은 분석 경계(북위 36.05 이하) 밖이라 구군 집계에서 제외했습니다.
+            <strong>하천 겹침, AI SHAP, 등급식 및 결측 자료의 한계:</strong>
+            하천 농축비(2.214배)는 지형 골짜기 구조 일치일 뿐 독립 검증이 아니며 공원 농축비(0.368배)는 1 미만입니다. TreeSHAP은 예측 모형의 기여 분해일 뿐 인과효과가 아니며, 조건부 시민 등급식 전환 시 1~2등급 Jaccard가 <strong>0.398~0.433</strong>까지 내려갑니다. 열대야 Sen 및 Mann-Kendall 검정은 자기상관 미보정 기본 추정이고, 하늘 상태는 일평균 운량과 일강수 대리 기준이며, 달서구와 달성군 가로수 결측, 현존식생도와 비오톱 경계 부재, 군위군 범위 제외, 야간 조도 및 방범 CCTV 미결합도 남아 있습니다.
           </li>
         </ol>
       </section>
@@ -1286,14 +1451,14 @@
   </div>
 
   <footer class="site-footer">
-    대구 밤의 찬바람길 웹 시각화 페이지 | 모든 수치는 <code>pipeline/coolwind/02_analysis_results.json</code> 및 <code>outputs/*.csv</code> 단일 출처 기준 | 배경지도: &copy; OpenStreetMap contributors (ODbL)
+    대구 밤의 찬바람길 웹 시각화 페이지 | 모든 수치는 <code>pipeline/coolwind/02_analysis_results.json</code> 및 <code>pipeline/coolwind/06_experiments.json</code> 단일 출처 기준 | 배경지도: &copy; OpenStreetMap contributors (ODbL)
   </footer>
 
   <!-- Leaflet JS & Local Data Bundle -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="data/web_data.js"></script>
   <script>
-    // Ensure data is available locally via script tag (file:// compatible) or fallback fetch
+    // Ensure data is available locally via script tag (file:// compatible)
     const DATA = window.COOLWIND_DATA;
 
     let map;
