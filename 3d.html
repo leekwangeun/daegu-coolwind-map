@@ -10,7 +10,7 @@
     :root {
       --board: #11201a; --board-2: #172a22; --rule: rgba(237, 242, 238, 0.16); --rule-strong: rgba(237, 242, 238, 0.3);
       --on-board: #edf2ee; --on-board-2: #b4c6bc; --on-board-3: #8ea497; --route: #ffd400; --route-ink: #151515;
-      --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+      --font: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; height: 100%; background: #0d1512; color: var(--on-board); font-family: var(--font); overflow: hidden; word-break: keep-all; -webkit-font-smoothing: antialiased; }
@@ -293,7 +293,7 @@
       s.renderOrder = 10;
       return s;
     }
-    const FONT = '"Pretendard Variable", Pretendard, "Malgun Gothic", sans-serif';
+    const FONT = '"Pretendard Variable", Pretendard, "Noto Sans KR", sans-serif';
     function label(text, kind) {
       const fs = kind === "peak" ? 30 : kind === "river" ? 26 : 26;
       const w = Math.ceil(text.length * fs * 1.05) + 28, h = fs + 22;
