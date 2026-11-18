@@ -1,0 +1,59 @@
+{
+  "crs": "EPSG:4326",
+  "leaflet_bounds": [
+    [
+      35.6,
+      128.35
+    ],
+    [
+      36.05,
+      128.8
+    ]
+  ],
+  "bbox": {
+    "lat_min": 35.6,
+    "lat_max": 36.05,
+    "lon_min": 128.35,
+    "lon_max": 128.8
+  },
+  "width": 1374,
+  "height": 1680,
+  "citizen_grade": {
+    "file": "data/citizen_grade_epsg4326.png",
+    "index_name": "시민 체감 찬바람길 등급 (1~5등급)",
+    "legend": [
+      {
+        "grade": 1,
+        "color": "#08519c",
+        "label": "1등급 핵심 찬바람 산책길 (상위 10%)"
+      },
+      {
+        "grade": 2,
+        "color": "#4292c6",
+        "label": "2등급 우수 찬바람 연결길 (상위 10~25%)"
+      },
+      {
+        "grade": 3,
+        "color": "#c6dbef",
+        "label": "3등급 보통 바람길 (상위 25~50%)"
+      },
+      {
+        "grade": 4,
+        "color": "#fdd0a2",
+        "label": "4등급 미약 구간 (상위 50~75%)"
+      },
+      {
+        "grade": 5,
+        "color": "#e6550d",
+        "label": "5등급 열기 정체 주의 구간 (하위 25%)"
+      }
+    ]
+  },
+  "cflow": {
+    "file": "data/cflow_epsg4326.png",
+    "index_name": "찬 공기 흐름 간이 지표 (C_flow, 0~100 상대 점수)",
+    "colormap": "PuBu",
+    "vmin": 0,
+    "vmax": 100
+  }
+}

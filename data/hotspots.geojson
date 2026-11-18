@@ -1,0 +1,455 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "BLK_01",
+      "properties": {
+        "hotspot_rank": 1,
+        "hotspot_id": "BLK_01",
+        "location_name": "달성군 / 1 km 안 이름 있는 하천 없음 / 1 km 안 도시공원 없음",
+        "lat": 35.73216,
+        "lon": 128.4757,
+        "upslope_c_flow_score": 33.8,
+        "downslope_built_up_ratio": 0.957,
+        "green_connectivity_score": 0.043,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 100.0,
+        "admin_review_recommendation": "녹지 단절 구간 녹지 확충 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 3254.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.4757,
+          35.73216
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_02",
+      "properties": {
+        "hotspot_rank": 2,
+        "hotspot_id": "BLK_02",
+        "location_name": "남구 / 1 km 안 이름 있는 하천 없음 / 장관어린이공원 약 401 m",
+        "lat": 35.82826,
+        "lon": 128.56156,
+        "upslope_c_flow_score": 29.68,
+        "downslope_built_up_ratio": 0.97,
+        "green_connectivity_score": 0.021,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 91.1,
+        "admin_review_recommendation": "녹지 단절 구간 녹지 확충 검토",
+        "_detail": {
+          "district": "남구",
+          "street_trees_within_300m": 127,
+          "dist_to_major_river_m": 3355.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.56156,
+          35.82826
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_03",
+      "properties": {
+        "hotspot_rank": 3,
+        "hotspot_id": "BLK_03",
+        "location_name": "달성군 / 1 km 안 이름 있는 하천 없음 / 달성공단(단지내)공원 약 962 m",
+        "lat": 35.7298,
+        "lon": 128.46638,
+        "upslope_c_flow_score": 28.06,
+        "downslope_built_up_ratio": 0.974,
+        "green_connectivity_score": 0.025,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 86.13,
+        "admin_review_recommendation": "녹지 단절 구간 녹지 확충 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 2630.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.46638,
+          35.7298
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_04",
+      "properties": {
+        "hotspot_rank": 4,
+        "hotspot_id": "BLK_04",
+        "location_name": "달성군 / 기세곡천 약 909 m / 본리1공원 약 721 m",
+        "lat": 35.78665,
+        "lon": 128.4601,
+        "upslope_c_flow_score": 27.82,
+        "downslope_built_up_ratio": 0.948,
+        "green_connectivity_score": 0.024,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 83.21,
+        "admin_review_recommendation": "녹지 단절 구간 녹지 확충 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 892.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.4601,
+          35.78665
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_05",
+      "properties": {
+        "hotspot_rank": 5,
+        "hotspot_id": "BLK_05",
+        "location_name": "달성군 / 1 km 안 이름 있는 하천 없음 / 1 km 안 도시공원 없음",
+        "lat": 35.73376,
+        "lon": 128.66016,
+        "upslope_c_flow_score": 27.75,
+        "downslope_built_up_ratio": 0.833,
+        "green_connectivity_score": 0.064,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 69.94,
+        "admin_review_recommendation": "녹지 단절 구간 녹지 확충 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 3006.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.66016,
+          35.73376
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_06",
+      "properties": {
+        "hotspot_rank": 6,
+        "hotspot_id": "BLK_06",
+        "location_name": "달성군 / 신천 약 260 m / 1 km 안 도시공원 없음",
+        "lat": 35.79493,
+        "lon": 128.62785,
+        "upslope_c_flow_score": 29.79,
+        "downslope_built_up_ratio": 0.813,
+        "green_connectivity_score": 0.109,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 69.7,
+        "admin_review_recommendation": "개발 밀도 관리 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 255.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.62785,
+          35.79493
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_07",
+      "properties": {
+        "hotspot_rank": 7,
+        "hotspot_id": "BLK_07",
+        "location_name": "달성군 / 낙동강 약 782 m / 북리공원 약 347 m",
+        "lat": 35.73083,
+        "lon": 128.43886,
+        "upslope_c_flow_score": 27.36,
+        "downslope_built_up_ratio": 0.909,
+        "green_connectivity_score": 0.14,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 69.12,
+        "admin_review_recommendation": "개발 밀도 관리 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 765.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.43886,
+          35.73083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_08",
+      "properties": {
+        "hotspot_rank": 8,
+        "hotspot_id": "BLK_08",
+        "location_name": "달성군 / 금호강 약 866 m / 1 km 안 도시공원 없음",
+        "lat": 35.89209,
+        "lon": 128.46469,
+        "upslope_c_flow_score": 25.86,
+        "downslope_built_up_ratio": 0.874,
+        "green_connectivity_score": 0.077,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 67.42,
+        "admin_review_recommendation": "녹지 단절 구간 녹지 확충 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 870.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.46469,
+          35.89209
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_09",
+      "properties": {
+        "hotspot_rank": 9,
+        "hotspot_id": "BLK_09",
+        "location_name": "달서구 / 1 km 안 이름 있는 하천 없음 / 장미어린이공원 약 394 m",
+        "lat": 35.80771,
+        "lon": 128.56029,
+        "upslope_c_flow_score": 29.74,
+        "downslope_built_up_ratio": 0.825,
+        "green_connectivity_score": 0.188,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 64.34,
+        "admin_review_recommendation": "개발 밀도 관리 검토",
+        "_detail": {
+          "district": "달서구",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 3392.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.56029,
+          35.80771
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_10",
+      "properties": {
+        "hotspot_rank": 10,
+        "hotspot_id": "BLK_10",
+        "location_name": "달서구 / 1 km 안 이름 있는 하천 없음 / 월광수변공원 약 492 m",
+        "lat": 35.79455,
+        "lon": 128.54983,
+        "upslope_c_flow_score": 28.9,
+        "downslope_built_up_ratio": 0.771,
+        "green_connectivity_score": 0.113,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 63.86,
+        "admin_review_recommendation": "개발 밀도 관리 검토",
+        "_detail": {
+          "district": "달서구",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 1978.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.54983,
+          35.79455
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_11",
+      "properties": {
+        "hotspot_rank": 11,
+        "hotspot_id": "BLK_11",
+        "location_name": "달서구 / 1 km 안 이름 있는 하천 없음 / 전원어린이공원 약 297 m",
+        "lat": 35.8205,
+        "lon": 128.5515,
+        "upslope_c_flow_score": 26.21,
+        "downslope_built_up_ratio": 0.952,
+        "green_connectivity_score": 0.214,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 63.38,
+        "admin_review_recommendation": "개발 밀도 관리 검토",
+        "_detail": {
+          "district": "달서구",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 3142.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.5515,
+          35.8205
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_12",
+      "properties": {
+        "hotspot_rank": 12,
+        "hotspot_id": "BLK_12",
+        "location_name": "달성군 / 천내천 약 23 m / 송정소공원 약 847 m",
+        "lat": 35.78965,
+        "lon": 128.52221,
+        "upslope_c_flow_score": 26.44,
+        "downslope_built_up_ratio": 0.798,
+        "green_connectivity_score": 0.072,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 63.26,
+        "admin_review_recommendation": "수변 녹지 연결 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 30.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.52221,
+          35.78965
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_13",
+      "properties": {
+        "hotspot_rank": 13,
+        "hotspot_id": "BLK_13",
+        "location_name": "수성구 / 신천 약 120 m / 상동 2공원 약 756 m",
+        "lat": 35.8227,
+        "lon": 128.60832,
+        "upslope_c_flow_score": 26.03,
+        "downslope_built_up_ratio": 0.83,
+        "green_connectivity_score": 0.144,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 59.76,
+        "admin_review_recommendation": "수변 녹지 연결 검토",
+        "_detail": {
+          "district": "수성구",
+          "street_trees_within_300m": 76,
+          "dist_to_major_river_m": 108.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.60832,
+          35.8227
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_14",
+      "properties": {
+        "hotspot_rank": 14,
+        "hotspot_id": "BLK_14",
+        "location_name": "달성군 / 1 km 안 이름 있는 하천 없음 / 1 km 안 도시공원 없음",
+        "lat": 35.7318,
+        "lon": 128.66743,
+        "upslope_c_flow_score": 27.87,
+        "downslope_built_up_ratio": 0.763,
+        "green_connectivity_score": 0.159,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 57.78,
+        "admin_review_recommendation": "개발 밀도 관리 검토",
+        "_detail": {
+          "district": "달성군",
+          "street_trees_within_300m": null,
+          "dist_to_major_river_m": 3529.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.66743,
+          35.7318
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BLK_15",
+      "properties": {
+        "hotspot_rank": 15,
+        "hotspot_id": "BLK_15",
+        "location_name": "수성구 / 1 km 안 이름 있는 하천 없음 / 삼주공원 약 285 m",
+        "lat": 35.8137,
+        "lon": 128.64505,
+        "upslope_c_flow_score": 26.01,
+        "downslope_built_up_ratio": 0.929,
+        "green_connectivity_score": 0.264,
+        "mean_building_height_m": null,
+        "blockage_risk_score": 57.46,
+        "admin_review_recommendation": "개발 밀도 관리 검토",
+        "_detail": {
+          "district": "수성구",
+          "street_trees_within_300m": 36,
+          "dist_to_major_river_m": 2064.0
+        },
+        "_reason": "GIS건물통합정보 미확보로 건물 높이는 계산하지 않음 (null)"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.64505,
+          35.8137
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>대구 밤의 찬바람길 - 공공데이터 기반 야간 찬 공기 흐름 분석과 시각화</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <style>
+    :root {
+      --bg: #f6f8fa;
+      --surface: #ffffff;
+      --surface-alt: #f0f4f8;
+      --border: #d8e1e8;
+      --text: #1c2833;
+      --text-muted: #52616b;
+      --primary: #08519c;
+      --primary-light: #e6f0fa;
+      --accent-corridor: #e4572e;
+      --accent-course: #d99b00;
+      --accent-hotspot: #9b2226;
+      --accent-green: #1a7f37;
+      --warn-bg: #fff8eb;
+      --warn-border: #f0b429;
+      --radius: 10px;
+      --shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      word-break: keep-all;
+    }
+
+    /* Header */
+    .site-header {
+      background: linear-gradient(135deg, #0b2545 0%, #134074 100%);
+      color: #ffffff;
+      padding: 24px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.16);
+      color: #e8f1fb;
+    }
+
+    .site-title {
+      margin: 0 0 6px 0;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .site-subtitle {
+      margin: 0 0 14px 0;
+      font-size: 15px;
+      color: #cfe0f5;
+      max-width: 960px;
+    }
+
+    .notice-bar {
+      background: rgba(255, 255, 255, 0.1);
+      border-left: 3px solid #6baed6;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #e2eefc;
+    }
+
+    /* Key KPI strip */
+    .kpi-strip {
+      max-width: 1400px;
+      margin: 16px auto 0;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .kpi-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .kpi-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Main container */
+    .main-container {
+      max-width: 1400px;
+      margin: 18px auto 40px;
+      padding: 0 20px;
+    }
+
+    /* Interactive Map Workspace */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+      align-items: start;
+      margin-bottom: 32px;
+    }
+
+    .map-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: sticky;
+      top: 16px;
+    }
+
+    .map-toolbar {
+      padding: 12px 16px;
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toolbar-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .toolbar-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .preset-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .btn-preset {
+      border: 1px solid #b8c7d6;
+      background: #ffffff;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-preset:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-preset.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .layer-toggles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 14px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .layer-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .layer-toggle input {
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 11px;
+      height: 11px;
+      border-radius: 3px;
+      border: 1px solid rgba(0, 0, 0, 0.25);
+    }
+
+    .opacity-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .opacity-row input[type="range"] {
+      width: 110px;
+      accent-color: var(--primary);
+    }
+
+    #map {
+      width: 100%;
+      height: 580px;
+      background: #e9eef2;
+    }
+
+    .map-legend-bar {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      background: #fafbfc;
+      font-size: 12px;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+    }
+
+    .legend-group-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .grade-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .grade-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      font-size: 11.5px;
+    }
+
+    .cflow-bar {
+      height: 10px;
+      border-radius: 4px;
+      background: linear-gradient(to right, #fff7fb, #ece7f2, #d0d1e6, #a6bddb, #74a9cf, #3690c0, #0570b0, #045a8d, #023858);
+      border: 1px solid #b8c7d6;
+      margin: 4px 0;
+    }
+
+    .cflow-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Quick explorer drawer below map */
+    .explorer-tabs {
+      display: flex;
+      border-top: 1px solid var(--border);
+      background: var(--surface-alt);
+      overflow-x: auto;
+    }
+
+    .explorer-tab {
+      flex: 1;
+      min-width: 110px;
+      padding: 9px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-align: center;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+    }
+
+    .explorer-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--surface);
+    }
+
+    .explorer-list {
+      max-height: 210px;
+      overflow-y: auto;
+      padding: 8px 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 7px;
+    }
+
+    .explorer-item {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      background: #ffffff;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .explorer-item:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .explorer-item-title {
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .explorer-item-meta {
+      color: var(--text-muted);
+      font-size: 11.5px;
+    }
+
+    /* Story column (5 steps) */
+    .story-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .story-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .story-step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .story-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .btn-map-sync {
+      border: 1px solid var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-map-sync:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .story-body p {
+      margin: 0 0 10px 0;
+      font-size: 14.5px;
+      color: var(--text);
+    }
+
+    .story-highlight {
+      background: var(--surface-alt);
+      border-left: 3px solid var(--primary);
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-size: 13.5px;
+      margin: 10px 0;
+    }
+
+    .story-caution {
+      background: var(--warn-bg);
+      border-left: 3px solid var(--warn-border);
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      margin: 10px 0;
+      color: #5c4000;
+    }
+
+    .story-figure {
+      margin: 12px 0 0 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .story-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      cursor: zoom-in;
+    }
+
+    .story-figcaption {
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: #fafbfc;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Bottom sections */
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      margin: 0 0 6px 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .section-desc {
+      margin: 0 0 16px 0;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 680px;
+    }
+
+    table.data-table th,
+    table.data-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    table.data-table th {
+      background: var(--surface-alt);
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.data-table tr:hover td {
+      background: #f8fbff;
+    }
+
+    .role-badge {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .role-daegu {
+      background: #e1f5fe;
+      color: #01579b;
+    }
+
+    .role-kma {
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+
+    .role-aux {
+      background: #f1f3f5;
+      color: #495057;
+    }
+
+    .two-col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .method-box {
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .method-box h4 {
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      color: var(--primary);
+    }
+
+    .method-box p,
+    .method-box ul {
+      margin: 0;
+      font-size: 13.5px;
+    }
+
+    .method-box ul {
+      padding-left: 18px;
+    }
+
+    .limitation-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+    }
+
+    .limitation-list li {
+      margin-bottom: 10px;
+    }
+
+    /* Additional gallery of remaining maps */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .gallery-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 180px;
+      object-fit: contain;
+      background: #f8f9fa;
+      display: block;
+      cursor: zoom-in;
+    }
+
+    .gallery-caption {
+      padding: 8px 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* Leaflet Custom Markers & Popups */
+    .rank-pin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 11px;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      border: 2px solid #ffffff;
+    }
+
+    .rank-pin-corridor {
+      background: #e4572e;
+      color: #ffffff;
+    }
+
+    .rank-pin-hotspot {
+      background: #ffffff;
+      color: #7f0000;
+      border: 2px solid #7f0000;
+    }
+
+    .station-pin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 10.5px;
+      border-radius: 4px;
+      padding: 2px 5px;
+      white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      border: 1.5px solid #ffffff;
+    }
+
+    .station-pin-obs {
+      background: #1b4332;
+      color: #ffffff;
+    }
+
+    .station-pin-noobs {
+      background: #6c757d;
+      color: #ffffff;
+    }
+
+    .popup-card {
+      font-family: "Malgun Gothic", sans-serif;
+      font-size: 12.5px;
+      line-height: 1.5;
+      min-width: 240px;
+    }
+
+    .popup-header {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      padding-bottom: 5px;
+      border-bottom: 2px solid var(--primary);
+      color: var(--text);
+    }
+
+    .popup-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 6px;
+    }
+
+    .popup-table td {
+      padding: 3px 4px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .popup-table td.k {
+      color: var(--text-muted);
+      width: 48%;
+    }
+
+    .popup-table td.v {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .popup-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: #f8f9fa;
+      padding: 5px 7px;
+      border-radius: 4px;
+    }
+
+    /* Image Lightbox Modal */
+    .lightbox-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 18, 30, 0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox-backdrop.open {
+      display: flex;
+    }
+
+    .lightbox-content {
+      max-width: 95vw;
+      max-height: 92vh;
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .lightbox-content img {
+      max-width: 92vw;
+      max-height: 82vh;
+      object-fit: contain;
+      background: #ffffff;
+    }
+
+    .lightbox-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: #1c2833;
+      color: #ffffff;
+      font-size: 13px;
+    }
+
+    .lightbox-close {
+      background: #e4572e;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .site-footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: #ffffff;
+    }
+
+    /* keep grid children from growing wider than the screen */
+    .workspace-grid > *, .two-col-grid > *, .kpi-strip > *, .gallery-grid > * { min-width: 0; }
+    .kpi-strip > * { overflow-wrap: anywhere; }
+    body { overflow-x: hidden; }
+
+    /* Responsive adjustments */
+    @media (max-width: 1100px) {
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+      .map-panel {
+        position: static;
+      }
+      .kpi-strip {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .two-col-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-title {
+        font-size: 21px;
+      }
+      .kpi-strip {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0 12px;
+      }
+      .main-container {
+        padding: 0 12px;
+      }
+      #map {
+        height: 420px;
+      }
+      .legend-grid {
+        grid-template-columns: 1fr;
+      }
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .section-card,
+      .story-card {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="badge-row">
+        <span class="badge">2026 대구광역시 기후, 환경, 탄소중립 공공데이터 AI 활용대회</span>
+        <span class="badge">부문 2 공공데이터 분석, 시각화</span>
+        <span class="badge">분석 격자: EPSG:5179 30m (대구 8개 구군 881.97km²)</span>
+      </div>
+      <h1 class="site-title">대구 밤의 찬바람길: 야간 찬 공기 흐름 간이 지표와 인터랙티브 지도</h1>
+      <p class="site-subtitle">
+        대구시 공공데이터 5종과 기상청 관측 자료 4종을 지형, 토지피복 자료와 결합해 밤에 산 사면에서 시가지로 내려오는 찬 공기 흐름을 상대 점수로 계산하고, 기상청 관측소 실측 밤 기온으로 방향성을 확인했습니다.
+      </p>
+      <div class="notice-bar">
+        <strong>해석 안내:</strong> 이 페이지의 모든 지표(생성 간이 지표 C_gen, 흐름 간이 지표 C_flow, 시민 체감 등급 1~5등급, 길목 막힘 위험 지수 R_block)는 지형과 토지피복으로 계산한 무차원 상대 점수 또는 백분위 등급이며, 실제 풍속, 풍량, 기온 저감량을 뜻하지 않습니다. "몇 도 더 시원하다"는 표현은 기상청 관측소 실측 밤 기온을 직접 비교할 때만 사용합니다.
+      </div>
+    </div>
+  </header>
+
+  <!-- Key Metrics Strip (All exact JSON values) -->
+  <section class="kpi-strip" aria-label="핵심 분석 수치">
+    <div class="kpi-card">
+      <div class="kpi-label">대구(ASOS 143) 열대야 변화</div>
+      <div class="kpi-value">10.4일 → 22.5일</div>
+      <div class="kpi-sub">초기 10년(1973~1982) 대 최근 10년(2017~2026), 2026년 31일</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">맑은 날 대 흐린 날 일교차</div>
+      <div class="kpi-value">11.57℃ vs 7.39℃</div>
+      <div class="kpi-sub">2026년 6~9월 맑은 날 26일 대 흐리거나 비 온 날 53일</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">대구 찬 공기 고생성 구역</div>
+      <div class="kpi-value">53.16% (468.83km²)</div>
+      <div class="kpi-sub">대구 8개 구군 중 C_gen 0.6 이상 비율 (평균 0.4827)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">도심 유입 길목과 추천 코스</div>
+      <div class="kpi-value">길목 15곳 / 코스 8개</div>
+      <div class="kpi-sub">유입 구간 47개 중 상위 15곳, 보행 코스 후보 41곳 중 8개</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">실측 7곳 흐름 지표 대 밤 기온</div>
+      <div class="kpi-value">Spearman -0.929</div>
+      <div class="kpi-sub">500m 버퍼, 열대야 31일 (p=0.0025, 단 시가지 비율과 얽힘)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">행정 검토 막힘 위험 지점</div>
+      <div class="kpi-value">상위 15곳</div>
+      <div class="kpi-sub">상류 흐름 상위 20%, 하류 시가지 0.7 이상 후보 1,224격자 중 선정</div>
+    </div>
+  </section>
+
+  <!-- Main Workspace: Map + 5-Step Story -->
+  <main class="main-container">
+    <div class="workspace-grid">
+
+      <!-- Left: Sticky Interactive Map Panel -->
+      <div class="map-panel">
+        <div class="map-toolbar">
+          <div class="toolbar-title-row">
+            <h2 class="toolbar-title">인터랙티브 찬바람길 지도 (클릭하여 상세 수치 확인)</h2>
+            <div class="preset-btns">
+              <button type="button" class="btn-preset active" id="preset-citizen" onclick="applyPreset('citizen')">시민 산책 코스 보기</button>
+              <button type="button" class="btn-preset" id="preset-flow" onclick="applyPreset('flow')">찬 공기 흐름과 길목 보기</button>
+              <button type="button" class="btn-preset" id="preset-admin" onclick="applyPreset('admin')">행정 막힘 위험 지점 보기</button>
+              <button type="button" class="btn-preset" id="preset-station" onclick="applyPreset('station')">기상청 관측소 비교</button>
+            </div>
+          </div>
+
+          <div class="layer-toggles" role="group" aria-label="지도 레이어 켜고 끄기">
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-grade" checked onchange="toggleLayer('grade', this.checked)" />
+              <span class="swatch" style="background: #08519c;"></span>
+              <span>찬바람길 등급(1~5)</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-cflow" onchange="toggleLayer('cflow', this.checked)" />
+              <span class="swatch" style="background: #3690c0;"></span>
+              <span>흐름 간이 지표(C_flow)</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-courses" checked onchange="toggleLayer('courses', this.checked)" />
+              <span class="swatch" style="background: #ffd400; border-color: #111;"></span>
+              <span>추천 코스(8개)</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-corridors" checked onchange="toggleLayer('corridors', this.checked)" />
+              <span class="swatch" style="background: #e4572e;"></span>
+              <span>유입 길목(15곳)</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-hotspots" onchange="toggleLayer('hotspots', this.checked)" />
+              <span class="swatch" style="background: #ffffff; border: 2px solid #7f0000;"></span>
+              <span>막힘 위험 지점(15곳)</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-stations" checked onchange="toggleLayer('stations', this.checked)" />
+              <span class="swatch" style="background: #1b4332;"></span>
+              <span>기상청 관측소(14곳)</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-waterways" checked onchange="toggleLayer('waterways', this.checked)" />
+              <span class="swatch" style="background: #1f5fbf;"></span>
+              <span>주요 하천</span>
+            </label>
+            <label class="layer-toggle">
+              <input type="checkbox" id="chk-districts" checked onchange="toggleLayer('districts', this.checked)" />
+              <span class="swatch" style="background: transparent; border: 1.5px solid #333;"></span>
+              <span>구군 경계(8개)</span>
+            </label>
+          </div>
+
+          <div class="opacity-row">
+            <span>래스터 오버레이 투명도:</span>
+            <input type="range" id="raster-opacity" min="0.2" max="1.0" step="0.05" value="0.82" oninput="updateRasterOpacity(this.value)" />
+            <span id="opacity-val">82%</span>
+            <span style="margin-left: auto; color: #08519c; font-weight: 600;">지도의 선, 길목, 지점, 관측소를 누르면 상세 팝업이 열립니다.</span>
+          </div>
+        </div>
+
+        <div id="map" role="region" aria-label="대구 밤의 찬바람길 인터랙티브 지도"></div>
+
+        <!-- Legend bar -->
+        <div class="map-legend-bar">
+          <div class="legend-grid">
+            <div>
+              <div class="legend-group-title">시민 체감 찬바람길 등급 (보행 영역 백분위, 실측 기온 차이 아님)</div>
+              <div class="grade-pills">
+                <span class="grade-pill"><span class="swatch" style="background:#08519c;"></span>1등급 (상위 10%)</span>
+                <span class="grade-pill"><span class="swatch" style="background:#4292c6;"></span>2등급 (10~25%)</span>
+                <span class="grade-pill"><span class="swatch" style="background:#c6dbef;"></span>3등급 (25~50%)</span>
+                <span class="grade-pill"><span class="swatch" style="background:#fdd0a2;"></span>4등급 (50~75%)</span>
+                <span class="grade-pill"><span class="swatch" style="background:#e6550d;"></span>5등급 열기 정체 주의 (하위 25%)</span>
+              </div>
+            </div>
+            <div>
+              <div class="legend-group-title">찬 공기 흐름 간이 지표 C_flow (0~100 상대 점수)</div>
+              <div class="cflow-bar"></div>
+              <div class="cflow-labels">
+                <span>0 (낮음)</span>
+                <span>50</span>
+                <span>100 (높음, 골짜기 및 수변 유입축)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Feature Selector List -->
+        <div class="explorer-tabs" role="tablist">
+          <button type="button" class="explorer-tab active" id="tab-courses" onclick="switchExplorerTab('courses')">추천 코스 (8개)</button>
+          <button type="button" class="explorer-tab" id="tab-corridors" onclick="switchExplorerTab('corridors')">유입 길목 (15곳)</button>
+          <button type="button" class="explorer-tab" id="tab-hotspots" onclick="switchExplorerTab('hotspots')">막힘 위험 지점 (15곳)</button>
+          <button type="button" class="explorer-tab" id="tab-stations" onclick="switchExplorerTab('stations')">기상청 관측소 (14곳)</button>
+          <button type="button" class="explorer-tab" id="tab-districts" onclick="switchExplorerTab('districts')">구군별 요약 (8곳)</button>
+        </div>
+        <div class="explorer-list" id="explorer-list"></div>
+      </div>
+
+      <!-- Right: 5-Step Story Flow (with 1 existing graph image per step) -->
+      <div class="story-column">
+
+        <!-- Step 1 -->
+        <article class="story-card" id="step-1">
+          <div class="story-step-header">
+            <div class="step-badge">
+              <span class="step-num">1</span>
+              <h3 class="story-title">대구 열대야는 늘고 있다</h3>
+            </div>
+          </div>
+          <div class="story-body">
+            <p>
+              대구는 팔공산, 비슬산, 앞산으로 둘러싸인 분지 지형이라 낮 동안 쌓인 열기가 밤에도 쉽게 빠져나가지 않습니다. 기상청 대구(ASOS 143) 관측소의 1973~2026년(54년) 기록을 분석한 결과, 연간 열대야 일수는 초기 10년(1973~1982) 평균 <strong>10.4일</strong>에서 최근 10년(2017~2026) 평균 <strong>22.5일</strong>로 늘었으며, 10년마다 <strong>2.85일</strong>씩 증가하는 추세(p=0.000391)가 나타났습니다.
+            </p>
+            <p>
+              특히 2026년 여름에는 열대야가 총 <strong>31일</strong> 발생했습니다. 열대야일 목록 기준 밤 최저기온 평균은 <strong>26.35℃</strong>(최고 <strong>28.8℃</strong>)였고, 시간별 자료에서 21시~다음 날 06시 최저기온으로 다시 집계한 31일 평균은 <strong>26.45℃</strong>였습니다(집계 시간대 정의 차이에 따른 수치).
+            </p>
+            <div class="story-highlight">
+              <strong>맑은 밤의 복사냉각 조건:</strong> 2026년 6~9월(122일) 가운데 맑고 강수 기록이 없는 날(운량 3.0 이하, <strong>26일</strong>)의 평균 일교차는 <strong>11.57℃</strong>(중앙값 11.5℃)로, 흐리거나 비가 온 날(강수 기록 있거나 운량 7.0 이상, <strong>53일</strong>)의 평균 일교차 <strong>7.39℃</strong>(중앙값 7.4℃)보다 뚜렷하게 컸습니다(Mann-Whitney U 검정 p=0.0).
+            </div>
+            <figure class="story-figure">
+              <img src="assets/chart_01_tropical_nights_trend_1973_2026.png" alt="대구 ASOS 143 연간 열대야 일수 추세와 2026년 밤 최저기온 및 하늘 상태별 일교차" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 1 그래프] 대구(ASOS 143) 1973~2026년 열대야 추세, 2026년 열대야 31일 밤 최저기온, 6~9월 하늘 상태별 일교차 비교 (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <!-- Step 2 -->
+        <article class="story-card" id="step-2">
+          <div class="story-step-header">
+            <div class="step-badge">
+              <span class="step-num">2</span>
+              <h3 class="story-title">밤에는 산에서 찬 공기가 내려온다</h3>
+            </div>
+            <button type="button" class="btn-map-sync" onclick="applyPreset('flow')">지도에서 흐름 보기</button>
+          </div>
+          <div class="story-body">
+            <p>
+              구름이 적고 비가 없는 맑은 여름밤에는 지표면이 하늘로 열을 방출하며 빠르게 식습니다(복사냉각). 이때 숲으로 덮인 산 사면은 시가지보다 먼저 식고, 상대적으로 무거워진 찬 공기는 중력을 따라 낮은 골짜기와 하천으로 흘러 내려옵니다.
+            </p>
+            <p>
+              이를 30m 격자에서 정량화하기 위해 토지피복 가중치(숲 1.0, 초지 및 관목 0.85, 농지 0.70, 나지 0.50, 수면 0.40, 시가지 0.0), 경사 가중치(5~25도에서 1.0), 고도 가중치를 곱해 <strong>찬 공기 생성 간이 지표(C_gen, 0~1 상대 지수)</strong>를 계산했습니다.
+            </p>
+            <div class="story-highlight">
+              <strong>구군별 생성 잠재력 차이:</strong> 대구 8개 구군(유효 면적 <strong>881.97km²</strong>)은 숲이 <strong>59.32%</strong>, 시가지가 <strong>22.94%</strong>이며, C_gen 평균은 <strong>0.4827</strong>(표준편차 0.3147), 0.6 이상인 고생성 구역은 <strong>468.83km²(53.16%)</strong>입니다. 팔공산과 비슬산을 품은 <strong>동구(평균 0.548)</strong>와 <strong>달성군(0.5396)</strong>이 가장 높고, 도심인 <strong>중구(0.0326)</strong>와 <strong>서구(0.0989)</strong>는 스스로 찬 공기를 만들 산림이 거의 없어 외곽 산림에서 이어지는 유입 통로가 중요합니다.
+            </div>
+            <figure class="story-figure">
+              <img src="assets/map_01_cool_air_generation.png" alt="대구 야간 찬 공기 생성 간이 지표 C_gen 분포 지도" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 2 지도] 대구 야간 찬 공기 생성 간이 지표(C_gen) 분포. 물리적 냉기 생성량이 아닌 지형과 피복 가중 상대 지수 (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <!-- Step 3 -->
+        <article class="story-card" id="step-3">
+          <div class="story-step-header">
+            <div class="step-badge">
+              <span class="step-num">3</span>
+              <h3 class="story-title">공공데이터로 그 길을 찾았다</h3>
+            </div>
+            <button type="button" class="btn-map-sync" onclick="focusCorridor('COR_01')">길목 1위(동화천) 이동</button>
+          </div>
+          <div class="story-body">
+            <p>
+              산에서 만들어진 찬 공기가 어느 골짜기와 수변을 따라 시가지로 들어오는지 찾기 위해, 싱크를 메운 수치표고모델(DEM) 위에서 다중 흐름 방향(MFD) 가중 누적과 유지 계수(하천 100m 및 도시공원 내부 0.99, 자연녹지 0.97, 녹지 섞인 시가지 0.92, 일반 시가지 0.80)를 적용해 <strong>찬 공기 흐름 간이 지표(C_flow, 0~100 상대 점수)</strong>를 산출했습니다(대구 평균 <strong>17.154점</strong>).
+            </p>
+            <p>
+              시가지 경계 관찰 구역에서 흐름 지표 상위 10%인 연속 구간 <strong>47개</strong>를 추출하고, 평균 점수가 가장 높은 <strong>도심 유입 길목 상위 15곳</strong>을 도출했습니다. 1위는 동구 <strong>동화천(COR_01, 평균 75.75점, 상위 0.7%)</strong>, 2위는 동구 <strong>불로천(COR_02, 71.17점, 상위 1.06%)</strong>이며, 수성구와 북구를 관통하는 <strong>신천(COR_06 64.68점, COR_07 62.95점)</strong>과 북구 <strong>팔거천(COR_13 59.75점, 인접 공원 16곳, 가로수 3,631그루)</strong>이 핵심 통로로 나타났습니다.
+            </p>
+            <div class="story-caution">
+              <strong>하천 및 공원 농축비 해석 주의 (독립 검증 아님):</strong> 감쇠 계수에서 하천과 공원 위치를 뺀 버전(river_free)에서도 상위 10% 격자의 하천 100m 이내 농축비는 <strong>2.214배</strong>(하천 포함 버전은 2.849배)였으나, DEM 흐름 누적은 원래 지형 골짜기를 따라가므로 이는 <strong>구조적 일치 확인일 뿐 독립 검증이 아닙니다</strong>. 또한 도시공원 농축비는 <strong>0.368배</strong>로 1보다 작은데, 흐름 상위 격자는 산지 계곡에 많고 도시공원은 시가지에 분포하기 때문입니다. 따라서 도시공원(672곳)과 가로수(97,618그루)는 흐름의 원천이 아니라 시가지로 유입된 길을 보행 공간으로 잇는 징검다리 역할로 해석해야 합니다.
+            </div>
+            <figure class="story-figure">
+              <img src="assets/chart_02_corridor_profile_and_green_effect.png" alt="주요 유입 축 단면: 산자락에서 도심으로 갈 때의 찬 공기 흐름 간이 지표 변화" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 3 그래프] 주요 유입 축(동화천, 불로천, 기세곡천) 상류 산림 진입점부터 시가지까지 이동할 때의 C_flow와 고도 변화 단면 (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <!-- Step 4 -->
+        <article class="story-card" id="step-4">
+          <div class="story-step-header">
+            <div class="step-badge">
+              <span class="step-num">4</span>
+              <h3 class="story-title">관측소 밤 기온과 같은 방향이다 (한계 포함)</h3>
+            </div>
+            <button type="button" class="btn-map-sync" onclick="applyPreset('station')">지도에서 관측소 보기</button>
+          </div>
+          <div class="story-body">
+            <p>
+              대구 주변 기상청 관측소 <strong>14곳</strong>(격자 안 <strong>12곳</strong>) 가운데 2026년 여름 시간별 기온 자료가 확보된 <strong>7곳</strong>(하빈, 달성, 대구북구, 옥포, 대구, 대구서구, 신암)에서 열대야 <strong>31일</strong>의 야간(21시~다음 날 06시) 실측 기온과 반경 500m 평균 지표를 비교했습니다.
+            </p>
+            <p>
+              관측소 실측 비교에서 흐름 지표가 가장 높은 <strong>하빈(C_flow 19.746)</strong>의 열대야 밤 최저기온 평균은 <strong>24.6℃</strong>로 대구(ASOS 143, C_flow 10.924, 밤 최저 <strong>26.45℃</strong>)보다 실측 기준 <strong>1.85℃ 더 시원했고</strong>, 옥포(25.57℃)는 <strong>0.88℃</strong>, 달성(25.53℃)은 <strong>0.92℃</strong>, 대구북구(25.97℃)는 <strong>0.48℃</strong> 더 낮았습니다. 반대로 도심 한가운데에 있어 흐름 지표가 가장 낮은 <strong>신암(C_flow 1.47)</strong>은 <strong>27.22℃</strong>로 대구 관측소보다 <strong>0.76℃</strong> 더 높았습니다. 7곳에서 500m 버퍼 C_flow와 열대야 밤 최저기온의 순위 상관은 <strong>Spearman ρ = -0.929</strong>(p=0.0025, Pearson r = -0.909), 야간 냉각 폭(18시 기온 빼기 밤 최저기온)과는 <strong>Spearman ρ = +0.893</strong>(p=0.0068)로 가설과 같은 방향이었습니다.
+            </p>
+            <div class="story-caution">
+              <strong>검증의 핵심 한계 (표본 수 n=7 및 시가지 비율과의 얽힘):</strong>
+              1) 시간별 기온이 있는 관측소가 <strong>7곳</strong>뿐이라 통계적 확정 검정이 아닌 방향성 확인 수준입니다(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳은 시간자료 없음).<br />
+              2) 같은 7곳에서 반경 500m C_flow와 시가지 비율의 순위 상관이 <strong>-0.75</strong>이고, 시가지 비율과 열대야 밤 최저기온의 순위 상관도 <strong>0.821</strong>(p=0.0234, 맑은 날 <strong>0.893</strong>)입니다. 따라서 이 자료만으로는 산과 하천에 가까운 관측소의 밤 기온이 낮은 현상을 찬 공기 유입만의 순수 효과로 분리할 수 없으며, 도시열섬(시가지 밀도) 효과와 함께 움직인 결과로 읽어야 합니다.
+            </div>
+            <figure class="story-figure">
+              <img src="assets/chart_03_station_validation_scatter.png" alt="기상청 관측소 7곳 C_flow 대 열대야 야간 최저기온, 고도보정 기온, 야간 냉각 폭 산점도" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 4 그래프] 기상청 관측소 실측 7곳의 반경 500m 평균 C_flow와 2026년 열대야 31일 야간 기온 지표 대조 산점도 (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <!-- Step 5 -->
+        <article class="story-card" id="step-5">
+          <div class="story-step-header">
+            <div class="step-badge">
+              <span class="step-num">5</span>
+              <h3 class="story-title">이렇게 쓸 수 있다 (시민 코스, 행정 검토)</h3>
+            </div>
+            <button type="button" class="btn-map-sync" onclick="applyPreset('citizen')">시민 코스 보기</button>
+          </div>
+          <div class="story-body">
+            <p>
+              같은 분석 격자 위에서 도출한 지표를 시민 보행 안내와 도시계획 사전 검토라는 두 가지 용도로 연결했습니다.
+            </p>
+            <p>
+              <strong>1) 시민용 체감 찬바람길 등급(1~5등급)과 추천 코스 8곳:</strong> 보행 영역(반경 300m 시가지 비율 0.3 이상, 유효 <strong>266,611격자</strong>)에서 구군 간 공정 비교를 위해 대구 전역 공통식(<code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>)의 백분위로 1등급(상위 10%)부터 5등급(하위 25%, 열기 정체 주의 구간)을 매겼습니다. 1~2등급 수변과 공원이 이어진 후보 <strong>41곳</strong> 중 하천별 대표성을 고려해 <strong>신천 수변 코스(CRS_01, 15.65km)</strong>, <strong>금호강 수변 코스(CRS_02, 11.08km)</strong>, <strong>팔거천 수변 코스(CRS_03, 10.38km, 공원 12곳 연결)</strong> 등 <strong>8개 추천 코스</strong>를 선정했습니다.
+            </p>
+            <p>
+              <strong>2) 행정용 길목 막힘 위험 지수(R_block, 0~100)와 중점 검토 지점 15곳:</strong> 반경 300m 상류 C_flow가 대구 상위 20%(<strong>25.682점</strong> 이상)이면서 하류 시가지 비율이 <strong>0.7</strong> 이상인 후보 <strong>1,224격자</strong>에 대해 녹지 단절도를 반영한 막힘 위험 지수를 계산하고, 500m 간격 조건으로 <strong>상위 15곳(BLK_01~BLK_15)</strong>을 추렸습니다. 각 지점은 여건에 따라 <em>녹지 단절 구간 녹지 확충 검토</em>(BLK_01 달성군 100.0점, BLK_02 남구 91.1점 등), <em>개발 밀도 관리 검토</em>(BLK_06 달성군 신천 인근 69.7점, BLK_09 달서구 64.34점 등), <em>수변 녹지 연결 검토</em>(BLK_12 달성군 천내천 63.26점, BLK_13 수성구 신천 59.76점)의 사전 참고 지도로 활용할 수 있습니다.
+            </p>
+            <figure class="story-figure">
+              <img src="assets/map_04_citizen_coolwind_walk_grades.png" alt="시민용 열대야 저녁 체감 찬바람길 등급과 추천 코스 8곳 지도" onclick="openLightbox(this.src, this.alt)" />
+              <figcaption class="story-figcaption">
+                [단계 5 지도] 시민 체감 찬바람길 등급(1~5등급)과 추천 야간 산책 코스 8곳. 등급은 백분위 순위이며 실측 기온 차이가 아님 (클릭하면 크게 봅니다)
+              </figcaption>
+            </figure>
+          </div>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- Additional Static Figures Gallery (Maps 02, 03, 05 & Chart 04) -->
+    <section class="section-card" aria-label="분석 지도 및 민감도 실험 그래프 모음">
+      <h2 class="section-title">부록 시각화: 흐름 길목 지도, 녹지 징검다리, 행정 막힘 위험 지도, 민감도 실험</h2>
+      <p class="section-desc">
+        위 5단계 이야기 흐름에 포함된 그래프 외에 분석에서 생성한 나머지 지도 3종과 가중치 민감도 실험 그래프(실험 A, B, C)입니다. 이미지를 누르면 원본 해상도(300 DPI)로 확대됩니다.
+      </p>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="assets/map_02_cool_air_flow_corridors.png" alt="대구 밤의 찬바람길: 찬 공기 흐름 간이 지표와 도심 유입 길목 상위 15곳" onclick="openLightbox(this.src, this.alt)" />
+          <div class="gallery-caption"><strong>[지도 2]</strong> 찬 공기 흐름 간이 지표(C_flow)와 도심 유입 길목 15곳 및 기상청 관측소</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/map_03_public_green_stepping_stones.png" alt="대구시 도시공원 672곳과 가로수 97,618그루의 도심 찬바람 징검다리" onclick="openLightbox(this.src, this.alt)" />
+          <div class="gallery-caption"><strong>[지도 3]</strong> 대구시 도시공원(672곳) 영향권과 가로수(97,618그루, 6개 구) 징검다리 분포</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/map_05_admin_blockage_risk_hotspots.png" alt="행정용 찬 공기 유입 길목 막힘 위험 지수와 녹지 단절 검토 지점 15곳" onclick="openLightbox(this.src, this.alt)" />
+          <div class="gallery-caption"><strong>[지도 5]</strong> 행정용 길목 막힘 위험 지수(R_block)와 중점 검토 지점 상위 15곳</div>
+        </div>
+        <div class="gallery-item">
+          <img src="assets/chart_04_sensitivity_robustness.png" alt="토지피복 가중치, 시가지 감쇠 계수, 관측소 버퍼 반경 민감도 실험 그래프" onclick="openLightbox(this.src, this.alt)" />
+          <div class="gallery-caption"><strong>[그래프 4]</strong> 가중치 및 감쇠 계수 민감도 실험(A, B: 상위 10% Jaccard 0.93 이상)과 버퍼 반경 실험(C)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom 1: Data Sources and Licenses Table (Daegu & KMA first, Aux second) -->
+    <section class="section-card" id="section-data">
+      <h2 class="section-title">데이터 출처와 라이선스</h2>
+      <p class="section-desc">
+        대구광역시 공공데이터 5종과 기상청 공공데이터 4종을 핵심 자료로 사용하고, 지형(Copernicus DEM), 토지피복(ESA WorldCover), 하천 및 행정경계(OpenStreetMap)를 보조 공간자료로 결합했습니다. 모든 수치는 <code>02_analysis_results.json</code> 및 <code>table_01_dataset_summary.csv</code>와 동일합니다.
+      </p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>데이터명</th>
+              <th>제공 기관 및 식별번호</th>
+              <th>라이선스</th>
+              <th>원자료 건수/픽셀</th>
+              <th>유효 건수/픽셀</th>
+              <th>전처리 및 활용 내역</th>
+            </tr>
+          </thead>
+          <tbody id="dataset-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Bottom 2: Methodology & Sensitivity Summary + Limitations -->
+    <div class="two-col-grid">
+      <section class="section-card" id="section-method">
+        <h2 class="section-title">분석 방법 및 민감도 확인 요약</h2>
+        <p class="section-desc">
+          정밀 전산유체 모형 대신 공개 데이터만으로 언제든 재현할 수 있는 30m 격자 상시 갱신형 경량 스크리닝 지표를 설계했습니다.
+        </p>
+
+        <div class="method-box">
+          <h4>1. 기준 격자와 찬 공기 생성 간이 지표 (C_gen, 0~1)</h4>
+          <p>
+            분석 범위(북위 35.60~36.05, 동경 128.35~128.80)를 EPSG:5179 30m 격자(1,680행 × 1,374열, 총 2,308,320격자, 범위 내 유효 2,254,614격자)로 구성했습니다. <code>C_gen = W_lc × W_slope × (0.7 + 0.3 × 정규화 고도)</code>로 계산하며, 토지피복 가중치(숲 1.0, 초지 및 관목 0.85, 농지 0.70, 나지 0.50, 수면 0.40, 시가지 0.0)와 경사 가중치(1도 미만 0.3, 5~25도 1.0, 40도 초과 0.5)는 연구계획서 기본안 가정입니다.
+          </p>
+        </div>
+
+        <div class="method-box">
+          <h4>2. 찬 공기 흐름 간이 지표 (C_flow, 0~100)와 도심 유입 길목</h4>
+          <p>
+            Priority-flood 알고리즘으로 싱크를 메운 DEM 위에서 높은 격자부터 낮은 격자 순으로 다중 흐름 방향(MFD) 경사 비례 가중 누적 방정식 <code>F(i) = C_gen(i) + Σ γ(i) w(u→i) F(u)</code>를 풀고 <code>ln(1+F)</code>를 0~100으로 정규화했습니다. 유지 계수 γ는 하천 100m 버퍼 및 도시공원 내부 0.99, 자연녹지 0.97, 녹지가 섞인 시가지(반경 45m 녹지 비율 0.25 이상) 0.92, 일반 시가지 0.80입니다.
+          </p>
+        </div>
+
+        <div class="method-box">
+          <h4>3. 시민 체감 등급 (1~5등급)과 행정 막힘 위험 지수 (R_block, 0~100)</h4>
+          <p>
+            보행 영역(반경 300m 시가지 0.3 이상, 수면 0.5 미만)에서 달서구와 달성군의 가로수 자료 부재를 고려해 대구 전역 공통식 <code>S_walk_all = 0.65 × C_flow + 0.35 × I_river_park</code>의 백분위(상위 10%, 25%, 50%, 75%)로 1~5등급을 부여했습니다. 막힘 위험 지수는 반경 300m 상류 평균 C_flow와 하류 시가지 비율, 하류 녹지 단절도 <code>(1 - G_down)</code>의 곱을 대구 안에서 0~100으로 정규화했습니다.
+          </p>
+        </div>
+
+        <div class="method-box">
+          <h4>4. 가중치 민감도 실험 (실험 A, B, C)</h4>
+          <ul>
+            <li><strong>실험 A-1 (숲 집중안: 초지 0.6, 농지 0.3):</strong> 상위 10% Jaccard <strong>0.9553</strong>, 격자 순위 상관 <strong>0.9932</strong>, 상위 10개 길목 중 <strong>9개</strong> 유지 (상위 15개 길목 순위 상관 0.968).</li>
+            <li><strong>실험 A-2 (균등 녹지안: 초지 0.9, 농지 0.85):</strong> 상위 10% Jaccard <strong>0.986</strong>, 격자 순위 상관 <strong>0.9995</strong>, 상위 10개 길목 중 <strong>10개</strong> 모두 유지 (순위 상관 1.000).</li>
+            <li><strong>실험 B-1, B-2 (시가지 유지 계수 0.90 약한 감쇠 / 0.65 강한 감쇠):</strong> 상위 10% Jaccard 각각 <strong>0.9307</strong>, <strong>0.9393</strong>, 격자 순위 상관 모두 <strong>0.9925</strong>, 상위 10개 길목 중 <strong>7개</strong> 유지.</li>
+            <li><strong>실험 C (관측소 버퍼 반경 300m / 1,000m):</strong> 500m 기준 C_flow와의 순위 상관 각각 <strong>0.8112</strong>, <strong>0.8601</strong>(n=12). 고도 보정 야간 기온과의 순위 상관은 열대야일 기준 300m <strong>-0.964</strong>, 500m <strong>-0.929</strong>, 1,000m <strong>-0.857</strong>로 모두 음(-)의 방향 유지.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section-card" id="section-limits">
+        <h2 class="section-title">분석의 한계와 읽을 때 주의할 점</h2>
+        <p class="section-desc">
+          이 페이지의 결과는 물리 시뮬레이션이나 인과 검정이 아니며, 아래 한계를 명시한 상태에서 활용해야 합니다.
+        </p>
+        <ol class="limitation-list">
+          <li>
+            <strong>관측소 실측 검증의 소표본(n=7)과 시가지 비율 교란:</strong>
+            대구 주변 관측소 14곳 중 2026년 여름 시간별 기온이 확보된 곳은 <strong>7곳</strong>뿐이며(청도, 가산, 칠곡, 신녕, 경산, 하양, 팔공산 7곳은 시간자료 없음, 가산과 하양은 분석 격자 밖), 팔공산(853) 시간자료가 없어 전체 그룹과 팔공산 제외 그룹의 상관이 같습니다. 또한 7곳에서 반경 500m C_flow와 시가지 비율의 순위 상관이 <strong>-0.75</strong>이고, 시가지 비율과 열대야 밤 최저기온의 순위 상관도 <strong>0.821</strong>이므로, 밤 기온 차이가 찬 공기 유입 때문인지 시가지 열섬 차이 때문인지 분리할 수 없습니다.
+          </li>
+          <li>
+            <strong>하천 겹침(농축비 2.214배)은 독립 검증이 아님:</strong>
+            하천과 공원 위치를 감쇠 계수에서 뺀 버전에서도 흐름 상위 10% 격자의 하천 100m 이내 농축비가 <strong>2.214배</strong>로 나타나지만, DEM 기반 흐름 누적은 원래 지형 골짜기로 모이므로 하천과 겹치는 것은 알고리즘 구조상 당연한 결과입니다. 또한 도시공원 농축비는 <strong>0.368배</strong>로 1보다 작아, 공원이 흐름 축 위에 있다는 근거로 쓸 수 없습니다.
+          </li>
+          <li>
+            <strong>수치표고모델(Copernicus DEM)의 표면 모델(DSM) 한계:</strong>
+            Copernicus DEM GLO-30은 건물과 수목 높이가 포함된 표면 모델(DSM)이므로, 평탄한 시가지 내부의 미세 흐름 방향은 실제 지형 고도보다 고층 건물 군집이나 가로수 높이에 영향을 받았을 수 있습니다.
+          </li>
+          <li>
+            <strong>건물 높이 자료 및 일부 구군 가로수 원자료 미확보:</strong>
+            국토교통부 GIS건물통합정보가 이 단계에 포함되지 않아 길목 막힘 위험 지수(R_block)는 건물 높이와 건폐율 대신 WorldCover 시가지 비율과 녹지 단절도 대체안으로 계산했습니다. 또한 대구시 가로수 정보(2022)에 <strong>달서구와 달성군</strong> 자료가 없어 두 구군은 0그루가 아닌 <em>자료 없음(null)</em>으로 처리했고, 시민 체감 등급은 가로수를 제외한 대구 전역 공통식으로 산출했습니다.
+          </li>
+          <li>
+            <strong>가중치 가정과 행정구역 범위:</strong>
+            생성 지표와 흐름 유지 계수의 가중치는 문헌에서 확립된 물리 상수가 아니라 연구계획서 기본안 가정입니다. 민감도 실험 A, B는 가중치 변화에 대한 안정성을 보일 뿐 동일한 DEM 흐름 구조를 공유합니다. 군위군은 분석 경계(북위 36.05 이하) 밖이라 구군 집계에서 제외했습니다.
+          </li>
+        </ol>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Image Lightbox Modal -->
+  <div class="lightbox-backdrop" id="lightbox" onclick="closeLightbox(event)">
+    <div class="lightbox-content">
+      <img id="lightbox-img" src="" alt="" />
+      <div class="lightbox-bar">
+        <span id="lightbox-caption"></span>
+        <button type="button" class="lightbox-close" onclick="closeLightbox(event, true)">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    대구 밤의 찬바람길 웹 시각화 페이지 | 모든 수치는 <code>pipeline/coolwind/02_analysis_results.json</code> 및 <code>outputs/*.csv</code> 단일 출처 기준 | 배경지도: &copy; OpenStreetMap contributors (ODbL)
+  </footer>
+
+  <!-- Leaflet JS & Local Data Bundle -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="data/web_data.js"></script>
+  <script>
+    // Ensure data is available locally via script tag (file:// compatible) or fallback fetch
+    const DATA = window.COOLWIND_DATA;
+
+    let map;
+    const layers = {
+      grade: null,
+      cflow: null,
+      courses: null,
+      corridors: null,
+      corridorUpstream: null,
+      hotspots: null,
+      stations: null,
+      waterways: null,
+      districts: null,
+    };
+
+    const featureRefs = {
+      courses: {},
+      corridors: {},
+      hotspots: {},
+      stations: {},
+      districts: {},
+    };
+
+    let currentExplorerTab = "courses";
+
+    function fmt(val, suffix = "", fallback = "자료 없음") {
+      if (val === null || val === undefined || val === "") return fallback;
+      if (typeof val === "number") return val.toLocaleString("ko-KR") + suffix;
+      return String(val) + suffix;
+    }
+
+    function initMap() {
+      map = L.map("map", {
+        center: [35.845, 128.585],
+        zoom: 11,
+        minZoom: 9,
+        maxZoom: 17,
+        zoomControl: true,
+      });
+
+      // Pane ordering so vectors always sit cleanly above raster overlays
+      map.createPane("rasterPane");
+      map.getPane("rasterPane").style.zIndex = 250;
+      map.createPane("districtPane");
+      map.getPane("districtPane").style.zIndex = 350;
+      map.createPane("waterwayPane");
+      map.getPane("waterwayPane").style.zIndex = 380;
+      map.createPane("corridorPane");
+      map.getPane("corridorPane").style.zIndex = 420;
+      map.createPane("coursePane");
+      map.getPane("coursePane").style.zIndex = 450;
+      map.createPane("pointPane");
+      map.getPane("pointPane").style.zIndex = 500;
+
+      // OpenStreetMap tile layer with proper attribution
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors (ODbL)',
+      }).addTo(map);
+
+      const rb = DATA.raster_bounds;
+      const bounds = rb.leaflet_bounds;
+      const initOpacity = parseFloat(document.getElementById("raster-opacity").value);
+
+      // 1. Citizen grade raster overlay (EPSG:4326)
+      layers.grade = L.imageOverlay(rb.citizen_grade.file, bounds, {
+        opacity: initOpacity,
+        pane: "rasterPane",
+        interactive: false,
+      }).addTo(map);
+
+      // 2. Cool air flow index C_flow raster overlay (EPSG:4326)
+      layers.cflow = L.imageOverlay(rb.cflow.file, bounds, {
+        opacity: initOpacity,
+        pane: "rasterPane",
+        interactive: false,
+      });
+
+      // 3. Daegu districts boundary GeoJSON
+      layers.districts = L.geoJSON(DATA.geojson.districts, {
+        pane: "districtPane",
+        style: function () {
+          return {
+            color: "#2b3035",
+            weight: 1.6,
+            dashArray: "4, 3",
+            fillColor: "#ffffff",
+            fillOpacity: 0.02,
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          const p = feature.properties;
+          const treesText = p.street_trees_data_available
+            ? fmt(p.street_trees_valid_count, "그루")
+            : "자료 없음 (원자료 미포함)";
+          const html = `
+            <div class="popup-card">
+              <div class="popup-header">${p.district_name} 녹지 및 간이 지표 요약</div>
+              <table class="popup-table">
+                <tr><td class="k">평균 생성 지표 (C_gen)</td><td class="v">${fmt(p.mean_c_gen_score)} (0~1)</td></tr>
+                <tr><td class="k">고생성(C_gen ≥ 0.6) 면적 비율</td><td class="v">${fmt(p._detail && p._detail.high_c_gen_area_ratio_pct, "%")}</td></tr>
+                <tr><td class="k">평균 흐름 지표 (C_flow)</td><td class="v">${fmt(p.mean_c_flow_score)}점 (0~100)</td></tr>
+                <tr><td class="k">현존식생도 산림 식생 비율</td><td class="v">${fmt(p.forest_vegetation_ratio_pct, "%")} (${fmt(p.vegetation_survey_area_km2, "km²")})</td></tr>
+                <tr><td class="k">우수비오톱(Ⅰ, Ⅱ등급) 면적</td><td class="v">${fmt(p.biotope_grade1_2_area_km2, "km²")}</td></tr>
+                <tr><td class="k">도시공원 수 (면적)</td><td class="v">${fmt(p.urban_parks_count, "곳")} (${fmt(p.urban_parks_area_km2, "km²")})</td></tr>
+                <tr><td class="k">가로수 유효 본수</td><td class="v">${treesText}</td></tr>
+              </table>
+              ${p._reason ? `<div class="popup-note">${p._reason}</div>` : ""}
+            </div>
+          `;
+          layer.bindPopup(html);
+          featureRefs.districts[p.district_name] = layer;
+        },
+      }).addTo(map);
+
+      // 4. Waterways GeoJSON
+      layers.waterways = L.geoJSON(DATA.geojson.waterways, {
+        pane: "waterwayPane",
+        style: function (feature) {
+          const isMajor = feature.properties.is_major;
+          return {
+            color: isMajor ? "#1f5fbf" : "#4a89dc",
+            weight: isMajor ? 2.2 : 1.2,
+            opacity: isMajor ? 0.85 : 0.65,
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          const p = feature.properties;
+          layer.bindTooltip(`${p.name} (${p.waterway})`, { sticky: true });
+        },
+      }).addTo(map);
+
+      // 5. Upstream trace line layer (shown when a corridor is clicked)
+      layers.corridorUpstream = L.layerGroup().addTo(map);
+
+      // 6. Major inflow corridors (15 Polygons + numbered rank pins)
+      layers.corridors = L.layerGroup().addTo(map);
+      DATA.geojson.corridors.features.forEach(function (feature) {
+        const p = feature.properties;
+        const det = p._detail || {};
+        const ent = det.source_forest_entry || {};
+        const treesText = p.adjacent_street_trees_count !== null && p.adjacent_street_trees_count !== undefined
+          ? fmt(p.adjacent_street_trees_count, "그루")
+          : "자료 없음 (달성군 원자료 미포함)";
+
+        const popupHtml = `
+          <div class="popup-card">
+            <div class="popup-header">[유입 길목 ${p.rank}위] ${p.corridor_id}: ${p.corridor_name}</div>
+            <table class="popup-table">
+              <tr><td class="k">구군 / 연결 하천</td><td class="v">${p.district} / ${p.connecting_waterway}</td></tr>
+              <tr><td class="k">평균 흐름 지표 (C_flow)</td><td class="v">${fmt(p.mean_c_flow_score)}점 (최대 ${fmt(det.max_c_flow_score)}점)</td></tr>
+              <tr><td class="k">대구 전체 격자 상위 백분위</td><td class="v">상위 ${fmt(p.percentile_rank_pct, "%")}</td></tr>
+              <tr><td class="k">길목 면적 (길이 × 폭)</td><td class="v">${fmt(p.corridor_area_km2, "km²")} (약 ${fmt(det.approx_length_m, "m")} × ${fmt(det.approx_width_m, "m")})</td></tr>
+              <tr><td class="k">상류 찬 공기 기원</td><td class="v">${p.source_mountain_or_valley}</td></tr>
+              <tr><td class="k">인접 도시공원 (300m 이내)</td><td class="v">${fmt(p.adjacent_parks_count, "곳")}</td></tr>
+              <tr><td class="k">인접 가로수 (300m 이내)</td><td class="v">${treesText}</td></tr>
+            </table>
+            <div class="popup-note">
+              상류 산림 진입점까지 우세 흐름 경로 격자 수: ${fmt(det.upstream_path_cells, "개")} (길목 클릭 시 주황 점선으로 상류 경로 표시). C_flow는 상대 점수이며 실제 풍속이나 유량이 아닙니다.
+            </div>
+          </div>
+        `;
+
+        const polyLayer = L.geoJSON(feature, {
+          pane: "corridorPane",
+          style: {
+            color: "#b0200b",
+            weight: 2.2,
+            fillColor: "#e4572e",
+            fillOpacity: 0.65,
+          },
+        });
+        polyLayer.bindPopup(popupHtml);
+
+        const pinIcon = L.divIcon({
+          className: "rank-pin rank-pin-corridor",
+          html: `<span>${p.rank}</span>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+        });
+        const marker = L.marker([p.center_lat, p.center_lon], {
+          icon: pinIcon,
+          pane: "pointPane",
+        });
+        marker.bindPopup(popupHtml);
+
+        function showUpstream() {
+          layers.corridorUpstream.clearLayers();
+          if (p.upstream_path_coords && p.upstream_path_coords.length > 1) {
+            const latlngs = p.upstream_path_coords.map((c) => [c[1], c[0]]);
+            L.polyline(latlngs, {
+              color: "#e4572e",
+              weight: 3,
+              dashArray: "6, 5",
+              pane: "corridorPane",
+            })
+              .bindTooltip(`${p.corridor_id} 상류 산림 유입 경로 (${p.source_mountain_or_valley})`, { sticky: true })
+              .addTo(layers.corridorUpstream);
+            if (ent && ent.lat && ent.lon) {
+              L.circleMarker([ent.lat, ent.lon], {
+                radius: 5,
+                color: "#1a7f37",
+                fillColor: "#a6d96a",
+                fillOpacity: 0.95,
+                pane: "pointPane",
+              })
+                .bindTooltip(`산림 진입점: ${p.source_mountain_or_valley}`, { permanent: false })
+                .addTo(layers.corridorUpstream);
+            }
+          }
+        }
+
+        polyLayer.on("click", showUpstream);
+        marker.on("click", showUpstream);
+
+        layers.corridors.addLayer(polyLayer);
+        layers.corridors.addLayer(marker);
+        featureRefs.corridors[p.corridor_id] = { marker, polyLayer, props: p, showUpstream };
+      });
+
+      // 7. Recommended citizen walk courses (8 LineStrings)
+      layers.courses = L.layerGroup().addTo(map);
+      DATA.geojson.courses.features.forEach(function (feature) {
+        const p = feature.properties;
+        const det = p._detail || {};
+        const courseNum = parseInt(p.course_id.split("_")[1], 10);
+        const parksList = p.connected_parks_names && p.connected_parks_names.length
+          ? p.connected_parks_names.join(", ")
+          : "연결된 도시공원 없음";
+        let treesInfo = "자료 없음 (달서구, 달성군 구간 포함)";
+        if (p.street_trees_along_route_count !== null && p.street_trees_along_route_count !== undefined) {
+          treesInfo = `${fmt(p.street_trees_along_route_count, "그루")} (주요 수종: ${p.dominant_tree_species || "-"})`;
+        } else if (det.street_trees_in_6district_part_count) {
+          treesInfo = `6개 구 구간 ${fmt(det.street_trees_in_6district_part_count, "그루")} (달성군 구간 자료 없음)`;
+        }
+
+        const popupHtml = `
+          <div class="popup-card">
+            <div class="popup-header">[추천 코스 ${courseNum}] ${p.course_name}</div>
+            <table class="popup-table">
+              <tr><td class="k">지나는 구군</td><td class="v">${p.district}</td></tr>
+              <tr><td class="k">찬바람길 체감 등급</td><td class="v">${p.grade}등급 (보행 영역 상위 ${fmt(p.top_percentile_pct, "%")})</td></tr>
+              <tr><td class="k">평균 보행 점수 (S_walk_all)</td><td class="v">${fmt(p.mean_walk_cool_score)}점</td></tr>
+              <tr><td class="k">코스 연장 길이</td><td class="v">${fmt(p.length_km, "km")} (${fmt(det.path_cells, "격자")})</td></tr>
+              <tr><td class="k">시점 ~ 종점</td><td class="v">${p.start_point.name} ~ ${p.end_point.name}</td></tr>
+              <tr><td class="k">연결된 도시공원 수</td><td class="v">${fmt(p.connected_parks_count, "곳")}</td></tr>
+              <tr><td class="k">경로 50m 이내 가로수</td><td class="v">${treesInfo}</td></tr>
+            </table>
+            <div class="popup-note">
+              <strong>연결 공원:</strong> ${parksList}<br />
+              ※ 등급은 흐름 간이 지표와 수변 및 공원 연결성의 백분위 등급이며 실측 기온 저감치가 아닙니다.
+            </div>
+          </div>
+        `;
+
+        const latlngs = feature.geometry.coordinates.map((c) => [c[1], c[0]]);
+        const casing = L.polyline(latlngs, {
+          color: "#111111",
+          weight: 6.5,
+          opacity: 0.9,
+          pane: "coursePane",
+        });
+        const coreLine = L.polyline(latlngs, {
+          color: "#ffd400",
+          weight: 3.6,
+          opacity: 1.0,
+          pane: "coursePane",
+        });
+
+        casing.bindPopup(popupHtml);
+        coreLine.bindPopup(popupHtml);
+        coreLine.bindTooltip(`코스 ${courseNum}: ${p.course_name} (${p.grade}등급, ${p.length_km}km)`, { sticky: true });
+
+        layers.courses.addLayer(casing);
+        layers.courses.addLayer(coreLine);
+        featureRefs.courses[p.course_id] = { line: coreLine, props: p };
+      });
+
+      // 8. Admin blockage risk hotspots (15 Points - default unchecked or toggleable)
+      layers.hotspots = L.layerGroup();
+      DATA.geojson.hotspots.features.forEach(function (feature) {
+        const p = feature.properties;
+        const det = p._detail || {};
+        const trees300 = det.street_trees_within_300m !== null && det.street_trees_within_300m !== undefined
+          ? fmt(det.street_trees_within_300m, "그루")
+          : "자료 없음 (달서구, 달성군)";
+
+        const popupHtml = `
+          <div class="popup-card">
+            <div class="popup-header" style="border-bottom-color:#7f0000;">[막힘 위험 ${p.hotspot_rank}위] ${p.hotspot_id} (${det.district || ""})</div>
+            <table class="popup-table">
+              <tr><td class="k">위치 설명</td><td class="v">${p.location_name}</td></tr>
+              <tr><td class="k">길목 막힘 위험 지수 (R_block)</td><td class="v">${fmt(p.blockage_risk_score)}점 (0~100)</td></tr>
+              <tr><td class="k">상류 300m 평균 C_flow</td><td class="v">${fmt(p.upslope_c_flow_score)}점 (상위 20% 기준 25.682)</td></tr>
+              <tr><td class="k">하류 300m 시가지 비율</td><td class="v">${fmt(p.downslope_built_up_ratio)}</td></tr>
+              <tr><td class="k">하류 300m 녹지 연결 점수(G)</td><td class="v">${fmt(p.green_connectivity_score)}</td></tr>
+              <tr><td class="k">반경 300m 가로수 수</td><td class="v">${trees300}</td></tr>
+              <tr><td class="k">주요 하천까지 거리</td><td class="v">약 ${fmt(det.dist_to_major_river_m, "m")}</td></tr>
+              <tr><td class="k">행정 검토 제안</td><td class="v" style="color:#9b2226;">${p.admin_review_recommendation}</td></tr>
+            </table>
+            <div class="popup-note">
+              ${p._reason || "WorldCover 시가지 밀도 및 녹지 단절도 기반 대체안"}
+            </div>
+          </div>
+        `;
+
+        const pinIcon = L.divIcon({
+          className: "rank-pin rank-pin-hotspot",
+          html: `<span>${p.hotspot_rank}</span>`,
+          iconSize: [22, 22],
+          iconAnchor: [11, 11],
+        });
+        const marker = L.marker([p.lat, p.lon], {
+          icon: pinIcon,
+          pane: "pointPane",
+        }).bindPopup(popupHtml);
+        marker.bindTooltip(`막힘 위험 ${p.hotspot_rank}위 (${p.blockage_risk_score}점): ${p.admin_review_recommendation}`);
+
+        layers.hotspots.addLayer(marker);
+        featureRefs.hotspots[p.hotspot_id] = { marker, props: p };
+      });
+
+      // 9. KMA Weather Stations (14 Points)
+      layers.stations = L.layerGroup().addTo(map);
+      DATA.geojson.stations.features.forEach(function (feature) {
+        const p = feature.properties;
+        const det = p._detail || {};
+        const hasObs = p.observed_night_tmin_mean_c !== null && p.observed_night_tmin_mean_c !== undefined;
+        const diff143 = det.tropical_night_tmin_diff_vs_143_c;
+        let diffText = "시간별 기온 자료 없음";
+        if (diff143 !== null && diff143 !== undefined) {
+          if (diff143 === 0) diffText = "기준 관측소 (0.0℃)";
+          else if (diff143 < 0) diffText = `${diff143}℃ (대구 143보다 ${Math.abs(diff143)}℃ 더 시원함)`;
+          else diffText = `+${diff143}℃ (대구 143보다 ${diff143}℃ 더 높음)`;
+        }
+
+        const labelText = hasObs
+          ? `${p.stn_name} ${p.observed_night_tmin_mean_c}℃`
+          : `${p.stn_name}(미관측)`;
+
+        const pinIcon = L.divIcon({
+          className: `station-pin ${hasObs ? "station-pin-obs" : "station-pin-noobs"}`,
+          html: `<span>▲ ${labelText}</span>`,
+          iconSize: [null, 22],
+          iconAnchor: [35, 11],
+        });
+
+        const popupHtml = `
+          <div class="popup-card">
+            <div class="popup-header">[기상청 ${p.stn_type}] ${p.stn_name} 관측소 (지점번호 ${p.stn_id})</div>
+            <table class="popup-table">
+              <tr><td class="k">해발고도 / 하천 거리</td><td class="v">${fmt(p.elev_m, "m")} / ${fmt(p.dist_to_waterway_m, "m")}</td></tr>
+              <tr><td class="k">500m 버퍼 평균 C_flow</td><td class="v">${fmt(p.buffer_500m_c_flow, "점")} (상위 ${fmt(det.buffer_500m_c_flow_top_pct, "%")})</td></tr>
+              <tr><td class="k">500m 버퍼 평균 C_gen</td><td class="v">${fmt(p.buffer_500m_c_gen)}</td></tr>
+              <tr><td class="k">500m 버퍼 시가지 / 녹지 비율</td><td class="v">${fmt(p.buffer_500m_built_ratio)} / ${fmt(p.buffer_500m_green_ratio)}</td></tr>
+              <tr><td class="k">열대야(31일) 밤 최저기온 평균</td><td class="v">${fmt(p.observed_night_tmin_mean_c, "℃")}</td></tr>
+              <tr><td class="k">대구(ASOS 143) 대비 실측 차이</td><td class="v">${diffText}</td></tr>
+              <tr><td class="k">고도 보정 밤 최저기온</td><td class="v">${fmt(p.elevation_adjusted_night_tmin_c, "℃")}</td></tr>
+              <tr><td class="k">열대야 야간 냉각 폭(18시-최저)</td><td class="v">${fmt(p.observed_night_cooling_range_c, "℃")}</td></tr>
+              <tr><td class="k">맑은 날(26일) 밤 최저 / 냉각 폭</td><td class="v">${fmt(det.clear_night_tmin_mean_c, "℃")} / ${fmt(det.clear_night_cooling_range_c, "℃")}</td></tr>
+            </table>
+            <div class="popup-note">
+              ${p._reason ? p._reason : "2026년 열대야 31일 야간(21시~다음 날 06시) 실측 시간자료 기준. 관측소 7곳 소표본이며 시가지 비율과 함께 움직이는 효과가 포함되어 있습니다."}
+            </div>
+          </div>
+        `;
+
+        const marker = L.marker([p.lat, p.lon], {
+          icon: pinIcon,
+          pane: "pointPane",
+        }).bindPopup(popupHtml);
+
+        layers.stations.addLayer(marker);
+        featureRefs.stations[String(p.stn_id)] = { marker, props: p };
+      });
+    }
+
+    function toggleLayer(key, visible) {
+      const lyr = layers[key];
+      if (!lyr) return;
+      if (visible) {
+        if (!map.hasLayer(lyr)) map.addLayer(lyr);
+      } else {
+        if (map.hasLayer(lyr)) map.removeLayer(lyr);
+        if (key === "corridors") layers.corridorUpstream.clearLayers();
+      }
+    }
+
+    function updateRasterOpacity(val) {
+      const v = parseFloat(val);
+      document.getElementById("opacity-val").textContent = Math.round(v * 100) + "%";
+      if (layers.grade) layers.grade.setOpacity(v);
+      if (layers.cflow) layers.cflow.setOpacity(v);
+    }
+
+    function setLayerChecks(cfg) {
+      Object.keys(cfg).forEach(function (k) {
+        const el = document.getElementById("chk-" + k);
+        if (el) {
+          el.checked = cfg[k];
+          toggleLayer(k, cfg[k]);
+        }
+      });
+    }
+
+    function applyPreset(mode) {
+      document.querySelectorAll(".btn-preset").forEach((b) => b.classList.remove("active"));
+      const activeBtn = document.getElementById("preset-" + mode);
+      if (activeBtn) activeBtn.classList.add("active");
+
+      if (mode === "citizen") {
+        setLayerChecks({
+          grade: true,
+          cflow: false,
+          courses: true,
+          corridors: false,
+          hotspots: false,
+          stations: false,
+          waterways: true,
+          districts: true,
+        });
+        switchExplorerTab("courses");
+        map.flyTo([35.855, 128.585], 12, { duration: 0.6 });
+      } else if (mode === "flow") {
+        setLayerChecks({
+          grade: false,
+          cflow: true,
+          courses: false,
+          corridors: true,
+          hotspots: false,
+          stations: true,
+          waterways: true,
+          districts: true,
+        });
+        switchExplorerTab("corridors");
+        map.flyTo([35.85, 128.585], 11, { duration: 0.6 });
+      } else if (mode === "admin") {
+        setLayerChecks({
+          grade: false,
+          cflow: true,
+          courses: false,
+          corridors: true,
+          hotspots: true,
+          stations: false,
+          waterways: true,
+          districts: true,
+        });
+        switchExplorerTab("hotspots");
+        map.flyTo([35.805, 128.555], 11, { duration: 0.6 });
+      } else if (mode === "station") {
+        setLayerChecks({
+          grade: false,
+          cflow: true,
+          courses: false,
+          corridors: false,
+          hotspots: false,
+          stations: true,
+          waterways: true,
+          districts: true,
+        });
+        switchExplorerTab("stations");
+        map.flyTo([35.85, 128.56], 11, { duration: 0.6 });
+      }
+    }
+
+    function switchExplorerTab(tab) {
+      currentExplorerTab = tab;
+      document.querySelectorAll(".explorer-tab").forEach((b) => b.classList.remove("active"));
+      const tabBtn = document.getElementById("tab-" + tab);
+      if (tabBtn) tabBtn.classList.add("active");
+
+      const container = document.getElementById("explorer-list");
+      container.innerHTML = "";
+
+      if (tab === "courses") {
+        DATA.analysis.citizen_walk_routes.recommended_courses.forEach(function (c) {
+          const div = document.createElement("div");
+          div.className = "explorer-item";
+          div.innerHTML = `
+            <div class="explorer-item-title">${c.course_id}: ${c.course_name}</div>
+            <div class="explorer-item-meta">${c.grade}등급 (상위 ${c.top_percentile_pct}%) | ${c.length_km}km | 공원 ${c.connected_parks_count}곳</div>
+          `;
+          div.onclick = function () {
+            setLayerChecks({ courses: true });
+            const ref = featureRefs.courses[c.course_id];
+            if (ref) {
+              map.fitBounds(ref.line.getBounds(), { maxZoom: 14, padding: [30, 30] });
+              ref.line.openPopup();
+            }
+          };
+          container.appendChild(div);
+        });
+      } else if (tab === "corridors") {
+        DATA.analysis.cool_air_flow_and_corridors.major_inflow_corridors.forEach(function (c, i) {
+          const div = document.createElement("div");
+          div.className = "explorer-item";
+          div.innerHTML = `
+            <div class="explorer-item-title">${i + 1}위 (${c.corridor_id}): ${c.corridor_name}</div>
+            <div class="explorer-item-meta">평균 C_flow ${c.mean_c_flow_score}점 (상위 ${c.percentile_rank_pct}%) | ${c.corridor_area_km2}km²</div>
+          `;
+          div.onclick = function () {
+            focusCorridor(c.corridor_id);
+          };
+          container.appendChild(div);
+        });
+      } else if (tab === "hotspots") {
+        DATA.analysis.admin_blockage_risk_hotspots.hotspots_top_list.forEach(function (h) {
+          const div = document.createElement("div");
+          div.className = "explorer-item";
+          div.innerHTML = `
+            <div class="explorer-item-title">${h.hotspot_rank}위 (${h.hotspot_id}): R_block ${h.blockage_risk_score}점</div>
+            <div class="explorer-item-meta">${h.admin_review_recommendation} | ${h._detail.district}</div>
+          `;
+          div.onclick = function () {
+            setLayerChecks({ hotspots: true });
+            const ref = featureRefs.hotspots[h.hotspot_id];
+            if (ref) {
+              map.flyTo([h.lat, h.lon], 14, { duration: 0.5 });
+              ref.marker.openPopup();
+            }
+          };
+          container.appendChild(div);
+        });
+      } else if (tab === "stations") {
+        const sortedSt = [...DATA.analysis.station_validation.stations_detail].sort((a, b) => {
+          const aObs = a.observed_night_tmin_mean_c !== null ? 0 : 1;
+          const bObs = b.observed_night_tmin_mean_c !== null ? 0 : 1;
+          if (aObs !== bObs) return aObs - bObs;
+          return (b.buffer_500m_c_flow || -1) - (a.buffer_500m_c_flow || -1);
+        });
+        sortedSt.forEach(function (s) {
+          const div = document.createElement("div");
+          div.className = "explorer-item";
+          const tminStr = s.observed_night_tmin_mean_c !== null ? `열대야 밤 최저 ${s.observed_night_tmin_mean_c}℃` : "시간자료 없음";
+          div.innerHTML = `
+            <div class="explorer-item-title">${s.stn_name} (${s.stn_type} ${s.stn_id})</div>
+            <div class="explorer-item-meta">500m C_flow: ${fmt(s.buffer_500m_c_flow, "점")} | ${tminStr}</div>
+          `;
+          div.onclick = function () {
+            setLayerChecks({ stations: true });
+            const ref = featureRefs.stations[String(s.stn_id)];
+            if (ref) {
+              map.flyTo([s.lat, s.lon], 13, { duration: 0.5 });
+              ref.marker.openPopup();
+            }
+          };
+          container.appendChild(div);
+        });
+      } else if (tab === "districts") {
+        DATA.analysis.public_green_summary_by_district.forEach(function (d) {
+          const div = document.createElement("div");
+          div.className = "explorer-item";
+          div.innerHTML = `
+            <div class="explorer-item-title">${d.district_name}</div>
+            <div class="explorer-item-meta">평균 C_gen ${d.mean_c_gen_score} | 평균 C_flow ${d.mean_c_flow_score}점 | 공원 ${d.urban_parks_count}곳</div>
+          `;
+          div.onclick = function () {
+            setLayerChecks({ districts: true });
+            const lyr = featureRefs.districts[d.district_name];
+            if (lyr) {
+              map.fitBounds(lyr.getBounds(), { padding: [20, 20] });
+              lyr.openPopup();
+            }
+          };
+          container.appendChild(div);
+        });
+      }
+    }
+
+    function focusCorridor(corId) {
+      setLayerChecks({ corridors: true, cflow: true });
+      const ref = featureRefs.corridors[corId];
+      if (ref) {
+        ref.showUpstream();
+        map.flyTo([ref.props.center_lat, ref.props.center_lon], 13, { duration: 0.5 });
+        ref.marker.openPopup();
+      }
+    }
+
+    function renderDatasetTable() {
+      const inv = DATA.analysis.datasets_inventory;
+      const roleOrder = {
+        "핵심_대구시공공데이터": 1,
+        "핵심_기상청공공데이터": 2,
+        "보조_공간자료": 3,
+      };
+      const roleLabel = {
+        "핵심_대구시공공데이터": { text: "대구시 공공데이터", cls: "role-daegu" },
+        "핵심_기상청공공데이터": { text: "기상청 공공데이터", cls: "role-kma" },
+        "보조_공간자료": { text: "보조 공간자료", cls: "role-aux" },
+      };
+
+      const sorted = [...inv].sort((a, b) => (roleOrder[a.role] || 9) - (roleOrder[b.role] || 9));
+      const tbody = document.getElementById("dataset-table-body");
+      tbody.innerHTML = "";
+
+      sorted.forEach(function (item) {
+        const rl = roleLabel[item.role] || { text: item.role, cls: "role-aux" };
+        const tr = document.createElement("tr");
+        const noteText = item.preprocessing_note || item._reason || "-";
+        tr.innerHTML = `
+          <td><span class="role-badge ${rl.cls}">${rl.text}</span></td>
+          <td><strong>${item.name}</strong></td>
+          <td>${item.source_provider}</td>
+          <td>${item.license}</td>
+          <td>${fmt(item.raw_row_or_pixel_count, "", "미확보")}</td>
+          <td>${fmt(item.valid_row_or_pixel_count, "", "미확보")}</td>
+          <td>${noteText}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openLightbox(src, alt) {
+      const lb = document.getElementById("lightbox");
+      document.getElementById("lightbox-img").src = src;
+      document.getElementById("lightbox-img").alt = alt || "";
+      document.getElementById("lightbox-caption").textContent = alt || "";
+      lb.classList.add("open");
+    }
+
+    function closeLightbox(e, force) {
+      if (force || e.target.id === "lightbox") {
+        document.getElementById("lightbox").classList.remove("open");
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+      initMap();
+      switchExplorerTab("courses");
+      renderDatasetTable();
+    });
+  </script>
+</body>
+</html>

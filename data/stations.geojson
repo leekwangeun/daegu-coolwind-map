@@ -1,0 +1,551 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "143",
+      "properties": {
+        "stn_id": 143,
+        "stn_name": "대구",
+        "stn_type": "ASOS",
+        "lat": 35.878,
+        "lon": 128.653,
+        "elev_m": 54.27,
+        "dist_to_waterway_m": 342.7,
+        "buffer_500m_c_gen": 0.1699,
+        "buffer_500m_c_flow": 10.924,
+        "buffer_500m_built_ratio": 0.598,
+        "buffer_500m_green_ratio": 0.2404,
+        "observed_night_tmin_mean_c": 26.45,
+        "elevation_adjusted_night_tmin_c": 26.8,
+        "observed_night_cooling_range_c": 6.36,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": 31,
+          "tropical_night_tmin_diff_vs_143_c": 0.0,
+          "clear_night_tmin_mean_c": 22.8,
+          "clear_night_cooling_range_c": 8.86,
+          "predicted_inflow_grade": 4,
+          "buffer_500m_c_flow_top_pct": 68.81,
+          "upslope_area_km2_max100m": 0.006,
+          "in_analysis_bbox": true
+        },
+        "_reason": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.653,
+          35.878
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "813",
+      "properties": {
+        "stn_id": 813,
+        "stn_name": "청도",
+        "stn_type": "AWS",
+        "lat": 35.654,
+        "lon": 128.7318,
+        "elev_m": 77.53,
+        "dist_to_waterway_m": 344.6,
+        "buffer_500m_c_gen": 0.2212,
+        "buffer_500m_c_flow": 15.407,
+        "buffer_500m_built_ratio": 0.1358,
+        "buffer_500m_green_ratio": 0.1127,
+        "observed_night_tmin_mean_c": null,
+        "elevation_adjusted_night_tmin_c": null,
+        "observed_night_cooling_range_c": null,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": null,
+          "tropical_night_tmin_diff_vs_143_c": null,
+          "clear_night_tmin_mean_c": null,
+          "clear_night_cooling_range_c": null,
+          "predicted_inflow_grade": 3,
+          "buffer_500m_c_flow_top_pct": 47.49,
+          "upslope_area_km2_max100m": 0.03,
+          "in_analysis_bbox": true
+        },
+        "_reason": "이 관측소의 열대야일 야간 시간자료 없음"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.7318,
+          35.654
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "824",
+      "properties": {
+        "stn_id": 824,
+        "stn_name": "가산",
+        "stn_type": "AWS",
+        "lat": 36.0956,
+        "lon": 128.5001,
+        "elev_m": 114.95,
+        "dist_to_waterway_m": 5386.9,
+        "buffer_500m_c_gen": null,
+        "buffer_500m_c_flow": null,
+        "buffer_500m_built_ratio": null,
+        "buffer_500m_green_ratio": null,
+        "observed_night_tmin_mean_c": null,
+        "elevation_adjusted_night_tmin_c": null,
+        "observed_night_cooling_range_c": null,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": null,
+          "tropical_night_tmin_diff_vs_143_c": null,
+          "clear_night_tmin_mean_c": null,
+          "clear_night_cooling_range_c": null,
+          "predicted_inflow_grade": null,
+          "buffer_500m_c_flow_top_pct": null,
+          "upslope_area_km2_max100m": null,
+          "in_analysis_bbox": false
+        },
+        "_reason": "관측소가 분석 범위(북위 35.60~36.05, 동경 128.35~128.80) 밖이라 격자 지표 없음; 이 관측소의 열대야일 야간 시간자료 없음"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.5001,
+          36.0956
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "825",
+      "properties": {
+        "stn_id": 825,
+        "stn_name": "칠곡",
+        "stn_type": "AWS",
+        "lat": 36.0398,
+        "lon": 128.3813,
+        "elev_m": 29.79,
+        "dist_to_waterway_m": 133.6,
+        "buffer_500m_c_gen": 0.1771,
+        "buffer_500m_c_flow": 13.801,
+        "buffer_500m_built_ratio": 0.1571,
+        "buffer_500m_green_ratio": 0.184,
+        "observed_night_tmin_mean_c": null,
+        "elevation_adjusted_night_tmin_c": null,
+        "observed_night_cooling_range_c": null,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": null,
+          "tropical_night_tmin_diff_vs_143_c": null,
+          "clear_night_tmin_mean_c": null,
+          "clear_night_cooling_range_c": null,
+          "predicted_inflow_grade": 4,
+          "buffer_500m_c_flow_top_pct": 54.41,
+          "upslope_area_km2_max100m": 1.913,
+          "in_analysis_bbox": true
+        },
+        "_reason": "이 관측소의 열대야일 야간 시간자료 없음"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.3813,
+          36.0398
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "826",
+      "properties": {
+        "stn_id": 826,
+        "stn_name": "신녕",
+        "stn_type": "AWS",
+        "lat": 36.0471,
+        "lon": 128.79,
+        "elev_m": 130.98,
+        "dist_to_waterway_m": 457.1,
+        "buffer_500m_c_gen": 0.25,
+        "buffer_500m_c_flow": 10.553,
+        "buffer_500m_built_ratio": 0.4355,
+        "buffer_500m_green_ratio": 0.247,
+        "observed_night_tmin_mean_c": null,
+        "elevation_adjusted_night_tmin_c": null,
+        "observed_night_cooling_range_c": null,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": null,
+          "tropical_night_tmin_diff_vs_143_c": null,
+          "clear_night_tmin_mean_c": null,
+          "clear_night_cooling_range_c": null,
+          "predicted_inflow_grade": 4,
+          "buffer_500m_c_flow_top_pct": 70.7,
+          "upslope_area_km2_max100m": 0.246,
+          "in_analysis_bbox": true
+        },
+        "_reason": "이 관측소의 열대야일 야간 시간자료 없음"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.79,
+          36.0471
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "827",
+      "properties": {
+        "stn_id": 827,
+        "stn_name": "경산",
+        "stn_type": "AWS",
+        "lat": 35.8243,
+        "lon": 128.743,
+        "elev_m": 61.21,
+        "dist_to_waterway_m": 876.7,
+        "buffer_500m_c_gen": 0.2119,
+        "buffer_500m_c_flow": 9.073,
+        "buffer_500m_built_ratio": 0.4932,
+        "buffer_500m_green_ratio": 0.2492,
+        "observed_night_tmin_mean_c": null,
+        "elevation_adjusted_night_tmin_c": null,
+        "observed_night_cooling_range_c": null,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": null,
+          "tropical_night_tmin_diff_vs_143_c": null,
+          "clear_night_tmin_mean_c": null,
+          "clear_night_cooling_range_c": null,
+          "predicted_inflow_grade": 5,
+          "buffer_500m_c_flow_top_pct": 77.66,
+          "upslope_area_km2_max100m": 0.016,
+          "in_analysis_bbox": true
+        },
+        "_reason": "이 관측소의 열대야일 야간 시간자료 없음"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.743,
+          35.8243
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "828",
+      "properties": {
+        "stn_id": 828,
+        "stn_name": "달성",
+        "stn_type": "AWS",
+        "lat": 35.6902,
+        "lon": 128.4238,
+        "elev_m": 24.93,
+        "dist_to_waterway_m": 121.6,
+        "buffer_500m_c_gen": 0.2894,
+        "buffer_500m_c_flow": 16.723,
+        "buffer_500m_built_ratio": 0.1156,
+        "buffer_500m_green_ratio": 0.2182,
+        "observed_night_tmin_mean_c": 25.53,
+        "elevation_adjusted_night_tmin_c": 25.69,
+        "observed_night_cooling_range_c": 6.86,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": 31,
+          "tropical_night_tmin_diff_vs_143_c": -0.92,
+          "clear_night_tmin_mean_c": 21.86,
+          "clear_night_cooling_range_c": 9.09,
+          "predicted_inflow_grade": 3,
+          "buffer_500m_c_flow_top_pct": 42.6,
+          "upslope_area_km2_max100m": 68.751,
+          "in_analysis_bbox": true
+        },
+        "_reason": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.4238,
+          35.6902
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "840",
+      "properties": {
+        "stn_id": 840,
+        "stn_name": "하양",
+        "stn_type": "AWS",
+        "lat": 35.9126,
+        "lon": 128.8144,
+        "elev_m": 71.0,
+        "dist_to_waterway_m": 376.8,
+        "buffer_500m_c_gen": null,
+        "buffer_500m_c_flow": null,
+        "buffer_500m_built_ratio": null,
+        "buffer_500m_green_ratio": null,
+        "observed_night_tmin_mean_c": null,
+        "elevation_adjusted_night_tmin_c": null,
+        "observed_night_cooling_range_c": null,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": null,
+          "tropical_night_tmin_diff_vs_143_c": null,
+          "clear_night_tmin_mean_c": null,
+          "clear_night_cooling_range_c": null,
+          "predicted_inflow_grade": null,
+          "buffer_500m_c_flow_top_pct": null,
+          "upslope_area_km2_max100m": null,
+          "in_analysis_bbox": false
+        },
+        "_reason": "관측소가 분석 범위(북위 35.60~36.05, 동경 128.35~128.80) 밖이라 격자 지표 없음; 이 관측소의 열대야일 야간 시간자료 없음"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.8144,
+          35.9126
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "845",
+      "properties": {
+        "stn_id": 845,
+        "stn_name": "대구북구",
+        "stn_type": "AWS",
+        "lat": 35.9084,
+        "lon": 128.5907,
+        "elev_m": 30.18,
+        "dist_to_waterway_m": 364.1,
+        "buffer_500m_c_gen": 0.176,
+        "buffer_500m_c_flow": 15.619,
+        "buffer_500m_built_ratio": 0.4256,
+        "buffer_500m_green_ratio": 0.3107,
+        "observed_night_tmin_mean_c": 25.97,
+        "elevation_adjusted_night_tmin_c": 26.17,
+        "observed_night_cooling_range_c": 7.15,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": 31,
+          "tropical_night_tmin_diff_vs_143_c": -0.48,
+          "clear_night_tmin_mean_c": 22.27,
+          "clear_night_cooling_range_c": 9.78,
+          "predicted_inflow_grade": 3,
+          "buffer_500m_c_flow_top_pct": 46.66,
+          "upslope_area_km2_max100m": 0.437,
+          "in_analysis_bbox": true
+        },
+        "_reason": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.5907,
+          35.9084
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "846",
+      "properties": {
+        "stn_id": 846,
+        "stn_name": "대구서구",
+        "stn_type": "AWS",
+        "lat": 35.8651,
+        "lon": 128.531,
+        "elev_m": 76.37,
+        "dist_to_waterway_m": 2151.2,
+        "buffer_500m_c_gen": 0.2358,
+        "buffer_500m_c_flow": 9.413,
+        "buffer_500m_built_ratio": 0.6404,
+        "buffer_500m_green_ratio": 0.345,
+        "observed_night_tmin_mean_c": 26.24,
+        "elevation_adjusted_night_tmin_c": 26.74,
+        "observed_night_cooling_range_c": 6.27,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": 31,
+          "tropical_night_tmin_diff_vs_143_c": -0.21,
+          "clear_night_tmin_mean_c": 22.81,
+          "clear_night_cooling_range_c": 8.63,
+          "predicted_inflow_grade": 5,
+          "buffer_500m_c_flow_top_pct": 76.18,
+          "upslope_area_km2_max100m": 0.768,
+          "in_analysis_bbox": true
+        },
+        "_reason": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.531,
+          35.8651
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "853",
+      "properties": {
+        "stn_id": 853,
+        "stn_name": "팔공산",
+        "stn_type": "AWS",
+        "lat": 36.0183,
+        "lon": 128.6213,
+        "elev_m": 568.37,
+        "dist_to_waterway_m": 2289.1,
+        "buffer_500m_c_gen": 0.8235,
+        "buffer_500m_c_flow": 23.429,
+        "buffer_500m_built_ratio": 0.0025,
+        "buffer_500m_green_ratio": 0.9906,
+        "observed_night_tmin_mean_c": null,
+        "elevation_adjusted_night_tmin_c": null,
+        "observed_night_cooling_range_c": null,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": null,
+          "tropical_night_tmin_diff_vs_143_c": null,
+          "clear_night_tmin_mean_c": null,
+          "clear_night_cooling_range_c": null,
+          "predicted_inflow_grade": 3,
+          "buffer_500m_c_flow_top_pct": 25.69,
+          "upslope_area_km2_max100m": 0.053,
+          "in_analysis_bbox": true
+        },
+        "_reason": "이 관측소의 열대야일 야간 시간자료 없음"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.6213,
+          36.0183
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "860",
+      "properties": {
+        "stn_id": 860,
+        "stn_name": "신암",
+        "stn_type": "AWS",
+        "lat": 35.8852,
+        "lon": 128.619,
+        "elev_m": 58.81,
+        "dist_to_waterway_m": 1415.4,
+        "buffer_500m_c_gen": 0.0282,
+        "buffer_500m_c_flow": 1.47,
+        "buffer_500m_built_ratio": 0.9411,
+        "buffer_500m_green_ratio": 0.0415,
+        "observed_night_tmin_mean_c": 27.22,
+        "elevation_adjusted_night_tmin_c": 27.6,
+        "observed_night_cooling_range_c": 5.93,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": 31,
+          "tropical_night_tmin_diff_vs_143_c": 0.76,
+          "clear_night_tmin_mean_c": 23.9,
+          "clear_night_cooling_range_c": 7.93,
+          "predicted_inflow_grade": 5,
+          "buffer_500m_c_flow_top_pct": 92.81,
+          "upslope_area_km2_max100m": 0.278,
+          "in_analysis_bbox": true
+        },
+        "_reason": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.619,
+          35.8852
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "991",
+      "properties": {
+        "stn_id": 991,
+        "stn_name": "옥포",
+        "stn_type": "AWS",
+        "lat": 35.8028,
+        "lon": 128.4456,
+        "elev_m": 27.5,
+        "dist_to_waterway_m": 66.4,
+        "buffer_500m_c_gen": 0.3034,
+        "buffer_500m_c_flow": 14.898,
+        "buffer_500m_built_ratio": 0.0026,
+        "buffer_500m_green_ratio": 0.226,
+        "observed_night_tmin_mean_c": 25.57,
+        "elevation_adjusted_night_tmin_c": 25.75,
+        "observed_night_cooling_range_c": 7.02,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": 31,
+          "tropical_night_tmin_diff_vs_143_c": -0.88,
+          "clear_night_tmin_mean_c": 21.71,
+          "clear_night_cooling_range_c": 9.98,
+          "predicted_inflow_grade": 3,
+          "buffer_500m_c_flow_top_pct": 49.57,
+          "upslope_area_km2_max100m": 0.02,
+          "in_analysis_bbox": true
+        },
+        "_reason": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.4456,
+          35.8028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "992",
+      "properties": {
+        "stn_id": 992,
+        "stn_name": "하빈",
+        "stn_type": "AWS",
+        "lat": 35.9062,
+        "lon": 128.4464,
+        "elev_m": 35.5,
+        "dist_to_waterway_m": 540.4,
+        "buffer_500m_c_gen": 0.2952,
+        "buffer_500m_c_flow": 19.746,
+        "buffer_500m_built_ratio": 0.2689,
+        "buffer_500m_green_ratio": 0.3311,
+        "observed_night_tmin_mean_c": 24.6,
+        "elevation_adjusted_night_tmin_c": 24.83,
+        "observed_night_cooling_range_c": 8.17,
+        "_detail": {
+          "observed_values_night_group": "열대야일",
+          "tropical_nights_used": 31,
+          "tropical_night_tmin_diff_vs_143_c": -1.85,
+          "clear_night_tmin_mean_c": 20.46,
+          "clear_night_cooling_range_c": 11.6,
+          "predicted_inflow_grade": 3,
+          "buffer_500m_c_flow_top_pct": 33.54,
+          "upslope_area_km2_max100m": 0.149,
+          "in_analysis_bbox": true
+        },
+        "_reason": ""
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          128.4464,
+          35.9062
+        ]
+      }
+    }
+  ]
+}
