@@ -24,17 +24,17 @@
     "legend": [
       {
         "grade": 1,
-        "color": "#08519c",
+        "color": "#54278f",
         "label": "1등급 핵심 찬바람 산책길 (상위 10%)"
       },
       {
         "grade": 2,
-        "color": "#4292c6",
+        "color": "#9e9ac8",
         "label": "2등급 우수 찬바람 연결길 (상위 10~25%)"
       },
       {
         "grade": 3,
-        "color": "#c6dbef",
+        "color": "#dadaeb",
         "label": "3등급 보통 바람길 (상위 25~50%)"
       },
       {
